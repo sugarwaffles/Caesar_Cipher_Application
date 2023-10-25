@@ -1,4 +1,6 @@
+
 class CaesarCipher:
+
     def __init__(self, key):
         self.key = key
         self.letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
