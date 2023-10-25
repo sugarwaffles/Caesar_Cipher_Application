@@ -1,13 +1,14 @@
 from classes.Menu_Options import MenuOptions
 # from classes.encryption import Encryption
 # from classes.decryption import Decryption
-# from classes.file_handler import FileHandler
-# from classes.sorted_list import SortedList
+from classes.Letter_Dist import LetterFrequencyDistribution
 
 if __name__ == "__main__":
     
     #Instantiate the MenuOptions class
     menu = MenuOptions()
+    
+    
     
     # Display essential information calling the start() method in MenuOptions class
     menu.start()
@@ -29,7 +30,10 @@ if __name__ == "__main__":
             menu.encrypt_decrypt_file()
             
         elif choice == 3:
-            pass
+        #Instantiate the LetterFrequencyDistribution class
+    
+            letter_dist = LetterFrequencyDistribution(input("Please enter the file you want to analyze: "))
+            letter_dist.analyze_file()    
         
         elif choice == 4:
             pass
