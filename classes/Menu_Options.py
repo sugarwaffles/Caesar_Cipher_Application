@@ -24,10 +24,10 @@ class MenuOptions:
         print('*                                                                     *')
         print('*  - Done By: Wilfred Djumin (2237503)                                *')
         print('*  - Class DAAA/FT/2B/05                                              *')
-        print('*********************************************************************** \n\n')
+        print('*********************************************************************** \n')
         
     def print_menu(self):
-        print("Please select your choice: (1,2,3,4,5,6,7,8)")
+        print("\nPlease select your choice: (1,2,3,4,5,6,7,8)")
         #Looping through dictionary to list options to user
         for choice, description in self.menu_options.items():
             print(f"\t {choice}. {description}")
@@ -55,8 +55,4 @@ class MenuOptions:
             #raise ValueError if user does not input a number/integer     
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
-                
-
-
-
-    # existing code here
+            
