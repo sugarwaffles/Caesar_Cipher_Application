@@ -1,8 +1,6 @@
 from classes.Menu_Options import MenuOptions
-# from classes.encryption import Encryption
-# from classes.decryption import Decryption
-# from classes.file_handler import FileHandler
-# from classes.sorted_list import SortedList
+# from classes.Encrypt_Decrypt import CaesarCipher
+# from classes.Letter_Dist import LetterFrequencyDistribution
 
 if __name__ == "__main__":
     
@@ -12,37 +10,13 @@ if __name__ == "__main__":
     # Display essential information calling the start() method in MenuOptions class
     menu.start()
     
-    # Prompt user to press "Enter" key 2
-    
-    input("Press Enter to continue...")
-    
+    # Prompt user to press "Enter" key 
+    # starting_input = input("Press Enter to continue...")
     
     while True:
-        
+        # if len(starting_input) != 0:
+        #     print("You typed some text before pressing enter! Please retry.")
+        #     break
         menu.print_menu()
         choice = menu.get_choice()
-
-        if choice == 1:
-            menu.encrypt_decrypt_message()
-            
-        elif choice == 2:
-            menu.encrypt_decrypt_file()
-            
-        elif choice == 3:
-            pass
-        
-        elif choice == 4:
-            pass
-            
-        elif choice == 5:
-            pass
-        
-        elif choice == 6:
-            pass
-            
-        elif choice == 7:
-            pass
-
-        elif choice == 8:
-            print("Exiting the application. Goodbye!")
-            break
+        menu.handle_choice(choice)
