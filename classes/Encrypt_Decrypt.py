@@ -1,53 +1,55 @@
 
 class CaesarCipher:
-
     def __init__(self, key):
         self.key = key
         self.letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
-    def get_cipherletter(self, new_key, letter):
-        if letter in self.letters:
-            if letter.isupper():
-                return self.letters[new_key].upper()
+    def transform_message(self, message, direction):
+        result = ""
+        for letter in message:
+            if letter in self.letters:
+                shift = self.key if direction == "encrypt" else -self.key
+                index = (self.letters.find(letter) + shift) % len(self.letters)
+                transformed_letter = self.letters[index]
+                if letter.isupper():
+                    result += transformed_letter.upper()
+                else:
+                    result += transformed_letter.lower()
             else:
-                return self.letters[new_key].lower()
-        else:
-            return letter
+                result += letter
+        return result
 
     def encrypt(self, message):
-        result = ""
-        for letter in message:
-            new_key = (self.letters.find(letter) + self.key) % len(self.letters)
-            result = result + self.get_cipherletter(new_key, letter)
-        
-        # Display and format both plaintext and ciphertext     
-        Output = f"\nPlaintext:\t{message}\nCiphertext:\t{result}"
-            
-        return Output
+        result = self.transform_message(message, "encrypt")
+        output = f"\nPlaintext:\t{message}\nCiphertext:\t{result}"
+        return output
 
     def decrypt(self, message):
-        result = ""
-        for letter in message:
-            new_key = (self.letters.find(letter) - self.key) % len(self.letters)
-            result = result + self.get_cipherletter(new_key, letter)
+        result = self.transform_message(message, "decrypt")
+        output = f"\nCiphertext:\t{message}\nPlaintext:\t{result}"
+        return output
+    
+    def encrypt_file(self,filename,output_filename):
+        file = open(f"Dataset/{filename}","r")
+        file_content = file.read()
+        result = self.transform_message(file_content, "encrypt")
+        
+        # write mode to allow creating if file does not exist /overwriting a file if already exist 
+        with open(f"Dataset/{output_filename}","w") as output_file:
+            output_file.write(result)
             
-        # Display and format both plaintext and ciphertext    
-        Output = f"\nCiphertext:\t{result}\nPlaintext:\t{message} "
+    def decrypt_file(self,filename,output_filename):
+        file = open(f"Dataset/{filename}","r")
+        file_content = file.read()
+        result = self.transform_message(file_content, "decrypt")
+        
+        # write mode to allow creating if file does not exist /overwriting a file if already exist 
+        with open(f"Dataset/{output_filename}","w") as output_file:
+            output_file.write(result)
             
-        return Output
-
-
-
-# Caesar Cipher child class for messages
-class CaesarCipherMessage(CaesarCipher):
-    def __init__(self, key):
-        super().__init__(key)
-
-    def encrypt(self, text):
-        super().encrypt(text)
-
-    def decrypt(self, text):
-        super().decrypt(text)
+        
+        
+        
 
 # Caesar Cipher child class for files
 class CaesarCipherFile(CaesarCipher):
