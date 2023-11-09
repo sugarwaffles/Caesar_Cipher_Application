@@ -1,5 +1,5 @@
 import os
-from classes.Encrypt_Decrypt import CaesarCipher
+from classes.Encrypt_Decrypt import CaesarCipher,CaesarCipherMessage,CaesarCipherFiles
 from classes.Letter_Dist import LetterFrequencyDistribution
 class MenuOptions:
     def __init__(self):
@@ -98,65 +98,72 @@ class MenuOptions:
         except ValueError:
             print("Please enter a valid number.")
                      
-    def handle_encryption_decryption(self,input_type):
+    def handle_encryption_decryption(self, input_type):
+        while True:
             action = ''
-            
-            # Continuously prompt the user until valid input is provided "E" or "D" (case sensitive) 
+            # Prompt the user to select either encryption or decryption
             while action != "E" and action != 'D':
                 action = input('\nEnter "E" for Encrypt or "D" for Decrypt: ')
-                
-                # Display error message if the input is not E or D
                 if action != "E" and action != 'D':
                     print("Only enter either 'E' or 'D' (case sensitive)")
-            
-            # Encrypt or decrypt based on the user's action/input
+                
             if action == "E":
                 
+                # Get the plaintext input to be encrypted
                 plaintext = self.get_non_empty_input(f"\nPlease type {input_type} you want to encrypt: ")
                 
-                # If user selected Encrypt file, we check file path if exist, if not re-input the filename  
-                while input_type == 'file' and not os.path.exists(f"Dataset\{plaintext}"):
-                    print(f"File {plaintext} not found.")
-                    plaintext = self.get_non_empty_input(f"\nPlease type {input_type} you want to encrypt: ")
-                            
-                cipherkey = self.get_valid_cipherkey()
-                    
+                # Check if the input type is a file and check if it exists
                 if input_type == 'file':
-                    output_file = self.get_non_empty_input("\nPlease enter a output file: ")
+                    if not os.path.exists(f"Dataset\{plaintext}"):
+                        print(f"File {plaintext} not found.")
+                        break
                     
+                    # Get the encryption key and instantiate the cipher class files
+                    cipherkey = self.get_valid_cipherkey()
+                    cipher = CaesarCipherFiles(cipherkey, plaintext)
+                    output_file = self.get_non_empty_input("\nPlease enter an output file: ")
                     
-                #Instantiate a CaesarCipher class with the inputted cipher key 
-                cipher = CaesarCipher(cipherkey)
-                
-                if input_type == 'message':
-                    #Calling the encrypt method 
-                    print(cipher.encrypt(plaintext))
+                    # Encrypt the file and show results in a new txt file
+                    cipher.encrypt(plaintext, output_file)
                 else:
-                    print(cipher.encrypt_file(plaintext,output_file))
-            
-            
+                    # Get the encryption key and instantiate the cipher class message
+                    cipherkey = self.get_valid_cipherkey()
+                    cipher = CaesarCipherMessage(cipherkey)
+                    # Encrypt the message and show results
+                    print(cipher.encrypt(plaintext))
+                    
+                # If the encryption is successful, break the loop and return to the initial selection menu
+                break
+                
             elif action == 'D':
+                
+                # Get the ciphertext input to be decrypted
                 ciphertext = self.get_non_empty_input(f"\nPlease type {input_type} you want to decrypt: ")
                 
-                # If user selected Decrypt file, we check file path if exist, if not re-input the filename  
-                while input_type == 'file' and not os.path.exists(f"Dataset\{ciphertext}"):
-                    print(f"File {ciphertext} not found.")
-                    ciphertext = self.get_non_empty_input(f"\nPlease type {input_type} you want to encrypt: ")
-                    
-                cipherkey = self.get_valid_cipherkey()
-    
+                # Check if the input type is a file and check if it exists
                 if input_type == 'file':
-                    output_file = self.get_non_empty_input("\nPlease enter a output file: ")    
+                    if not os.path.exists(f"Dataset\{ciphertext}"):
+                        print(f"File {ciphertext} not found.")
+                        break
                     
-                #Instantiate a CaesarCipher class with the inputted cipher key 
-                cipher = CaesarCipher(cipherkey)
-                
-                if input_type == 'message':
-                    #Calling the decrypt method 
-                    print(cipher.decrypt(ciphertext))
+                    # Get the decryption key and instantiate the appropriate cipher class for files
+                    cipherkey = self.get_valid_cipherkey()
+                    cipher = CaesarCipherFiles(cipherkey, ciphertext)
+                    output_file = self.get_non_empty_input("\nPlease enter an output file: ")
+                    # Decrypt the file and save results to the output file
+                    cipher.decrypt(ciphertext, output_file)
+                    
                 else:
+                    # Get the decryption key and instantiate the appropriate cipher class for message
+                    cipherkey = self.get_valid_cipherkey()
+                    cipher = CaesarCipherMessage(cipherkey)
+                    # Decrypt the message and display the result
+                    print(cipher.decrypt(ciphertext))
                     
-                    cipher.decrypt_file(ciphertext,output_file)
+                # If the decryption is successful, break the loop and return to the initial selection menu
+                break
+
+
                 
     def analyze_letter_frequency(self):
         #Instantiate the LetterFrequencyDistribution class and prompt user for file 
