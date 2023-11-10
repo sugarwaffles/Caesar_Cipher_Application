@@ -178,7 +178,7 @@ class MenuOptions:
     def analyze_letter_frequency(self):
         #Instantiate the LetterFrequencyDistribution class and prompt user for file 
     
-            letter_dist = LetterFrequencyDistribution(input("Please enter the file you want to analyze: "))
+            letter_dist = LetterFrequencyDistribution(input("\nPlease enter the file you want to analyze: "))
             
             # Calling the analyze_file method to return frequencies analysis
             letter_dist.analyze_file()         
