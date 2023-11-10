@@ -84,14 +84,3 @@ class CaesarCipherFiles(CaesarCipher):
                 output_file.write(result)
 
                 
-# Caesar Cipher child class for files
-# class CaesarCipherFile(CaesarCipher):
-#     def __init__(self, key, filename):
-#         super().__init__(key)
-#         self.filename = filename
-
-#     def encrypt_file(self):
-#         pass
-
-#     def decrypt_file(self):
-#         pass

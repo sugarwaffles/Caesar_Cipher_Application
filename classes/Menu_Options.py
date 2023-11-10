@@ -58,16 +58,26 @@ class MenuOptions:
                 
                 # Check if the choice exist in the menu_options dictionary
                 if choice in self.menu_options:
-                    #accepts and returns the inputted choice
-                    return choice
-                
+                    
+                    
+                    #Ask user for confirmation 
+                    confirm_choice = input(f'You chose option {choice}: {self.menu_options.get(choice)}. Confirm? (y/n): ').lower()
+                    
+                    if confirm_choice == 'y':
+                    # Return the inputted choice if confirmed
+                        return choice
+                    elif confirm_choice == 'n':
+                        print('Operation canceled. Please choose again.')
+                    else:
+                        print('Invalid confirmation. Please enter "y" for yes or "n" for no.\n')
+  
                 # If not, prompt user to re-enter a number between 1 and 8
                 else:
-                    print("Invalid choice. Please enter a number between 1 and 8.")
+                    print("Invalid choice. Please enter a number between 1 and 8.\n")
                     
             #raise ValueError if user does not input a number/integer     
             except ValueError:
-                print("Invalid input. Please enter a valid number.")
+                print("Invalid input. Please enter a valid number.\n")
                 
     # method/function that filters what function(s) to run based on user input
     def handle_choice(self, choice):
@@ -102,12 +112,12 @@ class MenuOptions:
         while True:
             action = ''
             # Prompt the user to select either encryption or decryption
-            while action != "E" and action != 'D':
-                action = input('\nEnter "E" for Encrypt or "D" for Decrypt: ')
-                if action != "E" and action != 'D':
-                    print("Only enter either 'E' or 'D' (case sensitive)")
+            while action != "e" and action != 'd':
+                action = input('\nEnter "E" for Encrypt or "D" for Decrypt: ').lower()
+                if action != "e" and action != 'd':
+                    print("Only enter either 'E' or 'D'")
                 
-            if action == "E":
+            if action == "e":
                 
                 # Get the plaintext input to be encrypted
                 plaintext = self.get_non_empty_input(f"\nPlease type {input_type} you want to encrypt: ")
@@ -135,7 +145,7 @@ class MenuOptions:
                 # If the encryption is successful, break the loop and return to the initial selection menu
                 break
                 
-            elif action == 'D':
+            elif action == 'd':
                 
                 # Get the ciphertext input to be decrypted
                 ciphertext = self.get_non_empty_input(f"\nPlease type {input_type} you want to decrypt: ")
