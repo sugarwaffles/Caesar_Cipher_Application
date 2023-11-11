@@ -176,9 +176,16 @@ class MenuOptions:
 
                 
     def analyze_letter_frequency(self):
-        #Instantiate the LetterFrequencyDistribution class and prompt user for file 
-    
-            letter_dist = LetterFrequencyDistribution(input("\nPlease enter the file you want to analyze: "))
-            
-            # Calling the analyze_file method to return frequencies analysis
-            letter_dist.analyze_file()         
+        # Instantiate the LetterFrequencyDistribution class and prompt user for file 
+        letter_dist_input = input("Please enter the file you want to analyze: ")
+        
+        #Check file path if it exists
+        file_path = os.path.join(os.path.dirname(__file__), "..", "Dataset", letter_dist_input)
+        
+        if os.path.exists(file_path):
+            letter_dist = LetterFrequencyDistribution(file_path)
+            # Call the analyze_file method here if needed
+            letter_dist.analyze_file()
+            # Call other methods or operations as needed
+        else:
+            print(f'File not found: {letter_dist_input}')        
