@@ -42,5 +42,4 @@ for item in n_alphabet:
     print(item, end=' ')
 
 
-""" print('{:<78s}{}'.format("", "|A-TEST"))
- """
+print('{:<78s}{}'.format("", "|A-TEST"))
