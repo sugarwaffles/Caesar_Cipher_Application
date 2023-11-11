@@ -67,7 +67,7 @@ class MenuOptions:
                     # Return the inputted choice if confirmed
                         return choice
                     elif confirm_choice == 'n':
-                        print('Operation canceled. Please choose again.')
+                        print('Operation canceled. Please choose again.\n')
                     else:
                         print('Invalid confirmation. Please enter "y" for yes or "n" for no.\n')
   

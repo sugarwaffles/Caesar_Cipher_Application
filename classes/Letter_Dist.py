@@ -1,47 +1,43 @@
-import collections
 import string
 
+class SortedList:
+    class Node:
+        def __init__(self, data):
+            self.data = data
+            self.nextNode = None
 
-class Node:
-    def __init__(self, letter, frequency):
-        self.letter = letter
-        self.frequency = frequency
-        self.next = None
-
-class SortedLinkedList:
     def __init__(self):
-        self.head = None
+        self.headNode = None
+        self.length = 0
 
-    def insert(self, letter, frequency):
-        new_node = Node(letter, frequency)
+    def __appendToHead(self, newNode):
+        oldHeadNode = self.headNode
+        self.headNode = newNode
+        self.headNode.nextNode = oldHeadNode
+        self.length += 1
 
-        if not self.head or frequency > self.head.frequency:
-            new_node.next = self.head
-            self.head = new_node
-        else:
-            current = self.head
-            while current.next and frequency <= current.next.frequency:
-                current = current.next
-            new_node.next = current.next
-            current.next = new_node
-
-def print_top5_frequencies(sorted_list):
-    current_node = sorted_list.head
-    top5_nodes = sorted([(node.letter, node.frequency) for node in iter_nodes(current_node)], key=lambda x: (-x[1], x[0]))[:5]
-    for letter, frequency in top5_nodes:
-        print(f"{letter} - {frequency}%")
-
-def iter_nodes(node):
-    while node:
-        yield node
-        node = node.next
-
-class LetterFrequencyDistribution:
-    def __init__(self, filename):
-        self.filename = filename
-
-    import collections
-import string
+    def insert(self, newNode):
+        self.length += 1
+        # If list is currently empty
+        if self.headNode is None:
+            self.headNode = newNode
+            return
+        # Check if it is going to be new head
+        if newNode.data < self.headNode.data:
+            self.__appendToHead(newNode)
+            return
+        # Check if it is going to be inserted between any pair of Nodes (left, right)
+        leftNode = self.headNode
+        rightNode = self.headNode.nextNode
+        while rightNode is not None:
+            if newNode.data < rightNode.data:
+                leftNode.nextNode = newNode
+                newNode.nextNode = rightNode
+                return
+            leftNode = rightNode
+            rightNode = rightNode.nextNode
+        # Once we reach here it must be added at the tail
+        leftNode.nextNode = newNode
 
 class LetterFrequencyDistribution:
     def __init__(self, filename):
@@ -50,14 +46,11 @@ class LetterFrequencyDistribution:
     def analyze_file(self):
         with open(self.filename, 'r') as file:
             text = file.read().lower()
-            letter_counts = collections.Counter(c for c in text if c.isalpha())
+            letter_counts = {letter: text.count(letter) for letter in string.ascii_lowercase}
             total_letters = sum(letter_counts.values())
 
             # Calculate frequencies
             frequencies = {k: round(v / total_letters * 100, 2) for k, v in letter_counts.items()}
-
-            # Find maximum frequency
-            max_frequency = max(frequencies.values())
 
             # Print top 5 frequencies
             top5_freq_table = []
@@ -65,15 +58,21 @@ class LetterFrequencyDistribution:
             top5_freq_table.append("TOP 5 FREQ")
             top5_freq_table.append("-" * 11)
 
-            # Top 5 letter freq sorted by alphabets if same freq
-            for letter, frequency in sorted(frequencies.items(), key=lambda x: (-x[1], x[0].upper()))[:5]:
+            # Top 5 letter freq sorted by frequency and alphabetically if same freq
+            sorted_top5 = sorted(frequencies.items(), key=lambda x: (-x[1], x[0]))
+
+            # Take only the top 5
+            sorted_top5 = sorted_top5[:5]
+
+            # Print top 5 frequencies
+            for letter, frequency in sorted_top5:
                 if frequency > 10:
                     top5_freq_table.append(f"| {letter.upper()} -{frequency}%")
                 else:
                     top5_freq_table.append(f"| {letter.upper()} - {frequency}%")
-            spaces_before_line = 10
+
+            # Total width represents the num of characters(space in this case) to fill the missing spaces (to the left of the str) which will be used for the y-axis creation
             total_width = 80
-            line_counter = 0
 
             # Create a list to store the histogram
             histogram = []
@@ -81,50 +80,51 @@ class LetterFrequencyDistribution:
             # Populate the histogram with '*' for each letter
             for y_index in range(25, -1, -1):  # Start from Z and go backward
                 line = ''
-                for x_index, letter in enumerate(string.ascii_uppercase):  # Use ascii_uppercase for X-axis labels
-                    percentage = frequencies.get(letter.lower(), 0)
-
-                    if percentage >= y_index:
+                for letter in string.ascii_uppercase:  # Use ascii_uppercase for X-axis labels
+                    count = letter_counts.get(letter.lower(), 0)
+                    # Only print a ' * ' when
+                    if count > y_index:
                         line += ' * '
                     else:
                         line += '   '
-                
-                histogram.append(line)
 
-            # Print TOP 5 FREQ table
+                histogram.append(line)
+            
             line_counter = 0
-            for i, (line_hist, letter) in enumerate(zip(histogram, string.ascii_uppercase)):
+
+            for line_hist, letter in zip(histogram, string.ascii_uppercase):
                 percentage = frequencies.get(letter.lower(), 0)
 
                 # Find starting level for TOP 5 FREQ table
                 if 'K' <= letter <= 'Q':
                     # Only print if there are lines left in top5_freq_table
                     if line_counter < len(top5_freq_table):
-                        line = "| {}- {:.2f}% {:>15s}".format(letter, percentage, top5_freq_table[line_counter])
-                        spaces_before_line = 26
-                        line = " " * spaces_before_line + line.rjust(total_width)
+                        line = "{} | {}- {:.2f}% {:>15s}".format(line_hist, letter, percentage, top5_freq_table[line_counter])
+                        line = " " + line.rjust(total_width)
                         print(line)
                         line_counter += 1
                 else:
+                    # Formatting double-digit percentages
                     if percentage > 10:
                         line = "{} | {}-{:.2f}%".format(line_hist, letter, percentage)
                     else:
                         line = "{} | {}- {:.2f}%".format(line_hist, letter, percentage)
 
                     # Reset spaces before line after finishing printing TOP 5 FREQ table to the right of the y-axis
-                    spaces_before_line = 10
+
                     output_line = " " + line.rjust(total_width)
                     print(output_line)
 
             # Print "X axis" using the correct unicode U+2500 (box drawing single horizontal line)
-            print('\u2500' * (total_width))  # Added +3 for better alignment
+            print('\u2500' * (total_width))
 
             # Print bottom letters
             print(' ', end=' ')
             for letter in string.ascii_uppercase:
                 print(f"{letter}  ", end='')
             print()
-            
+
+
 
 
 
