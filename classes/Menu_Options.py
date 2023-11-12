@@ -188,4 +188,6 @@ class MenuOptions:
             letter_dist.analyze_file()
             # Call other methods or operations as needed
         else:
-            print(f'File not found: {letter_dist_input}')        
+            print(f'File not found: {letter_dist_input}')      
+
+        input("\nPress enter key, to continue.....")

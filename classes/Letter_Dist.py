@@ -18,25 +18,30 @@ class SortedList:
 
     def insert(self, newNode):
         self.length += 1
-        # If list is currently empty
+        # If the list is currently empty
         if self.headNode is None:
             self.headNode = newNode
             return
+
         # Check if it is going to be new head
-        if newNode.data < self.headNode.data:
+        if newNode.data[1] > self.headNode.data[1]:
             self.__appendToHead(newNode)
             return
+
         # Check if it is going to be inserted between any pair of Nodes (left, right)
         leftNode = self.headNode
         rightNode = self.headNode.nextNode
         while rightNode is not None:
-            if newNode.data < rightNode.data:
+            if newNode.data[1] > rightNode.data[1] or (
+                newNode.data[1] == rightNode.data[1] and newNode.data[0] < rightNode.data[0]
+            ):
                 leftNode.nextNode = newNode
                 newNode.nextNode = rightNode
                 return
             leftNode = rightNode
             rightNode = rightNode.nextNode
-        # Once we reach here it must be added at the tail
+
+        # Once we reach here, it must be added at the tail
         leftNode.nextNode = newNode
 
 class LetterFrequencyDistribution:
@@ -58,18 +63,21 @@ class LetterFrequencyDistribution:
             top5_freq_table.append("TOP 5 FREQ")
             top5_freq_table.append("-" * 11)
 
-            # Top 5 letter freq sorted by frequency and alphabetically if same freq
-            sorted_top5 = sorted(frequencies.items(), key=lambda x: (-x[1], x[0]))
+            sorted_list = SortedList()
+            for letter, frequency in sorted(frequencies.items(), key=lambda x: (-x[1], x[0])):
+                sorted_list.insert(SortedList.Node((letter, frequency)))
 
-            # Take only the top 5
-            sorted_top5 = sorted_top5[:5]
-
-            # Print top 5 frequencies
-            for letter, frequency in sorted_top5:
+            # Iterate over the first five nodes in the sorted list
+            current_node = sorted_list.headNode
+            for _ in range(5):
+                if current_node is None:
+                    break
+                letter, frequency = current_node.data
                 if frequency > 10:
                     top5_freq_table.append(f"| {letter.upper()} -{frequency}%")
                 else:
                     top5_freq_table.append(f"| {letter.upper()} - {frequency}%")
+                current_node = current_node.nextNode
 
             # Total width represents the num of characters(space in this case) to fill the missing spaces (to the left of the str) which will be used for the y-axis creation
             total_width = 80
