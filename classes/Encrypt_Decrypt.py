@@ -3,26 +3,26 @@
 import os
 
 class CaesarCipher:
-    def __init__(self, key):
-        self.__key = key
-        self.__letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    def __init__(self, key,letters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"):
+        self._key = key
+        self._letters = letters
 
-    def _get_key(self):
-        return self.__key
+    def get_key(self):
+        return self._key
 
-    def _set_key(self, new_key):
-        self.__key = new_key
+    def set_key(self, new_key):
+        self._key = new_key
 
-    def _get_letters(self):
-        return self.__letters
+    def get_letters(self):
+        return self._letters
 
     def transform_message(self, message, direction):
         result = ""
         for letter in message:
-            if letter in self.__letters:
-                shift = self.__key if direction == "encrypt" else -self.__key
-                index = (self.__letters.find(letter) + shift) % len(self.__letters)
-                transformed_letter = self.__letters[index]
+            if letter in self.get_letters():
+                shift = self.get_key() if direction == "encrypt" else -self.get_key()
+                index = (self.get_letters().find(letter) + shift) % len(self.get_letters())
+                transformed_letter = self.get_letters()[index]
                 if letter.isupper():
                     result += transformed_letter.upper()
                 else:
@@ -60,27 +60,27 @@ class CaesarCipherFiles(CaesarCipher):
             super().__init__(key)
             self._filename = filename
         else:
-            raise Exception("Filename does not exist! ")
+            print("Filename does not exist! ")
 
     # Check if filename actually exists; if not, return False
     def pass_filename_criteria(self, filename):
-        if os.path.exists(f"Dataset\{filename}"):
+        if os.path.exists(filename):
             return True
         else:
             return False
 
     def encrypt(self, filename, output_filename):
-        with open(f"Dataset/{filename}", "r") as file:
+        with open(filename, "r") as file:
             file_content = file.read()
             result = self.transform_message(file_content, "encrypt")
-            with open(f"Dataset/{output_filename}", "w") as output_file:
+            with open(output_filename, "w") as output_file:
                 output_file.write(result)
 
     def decrypt(self, filename, output_filename):
-        with open(f"Dataset/{filename}", "r") as file:
+        with open(filename, "r") as file:
             file_content = file.read()
             result = self.transform_message(file_content, "decrypt")
-            with open(f"Dataset/{output_filename}", "w") as output_file:
+            with open(output_filename, "w") as output_file:
                 output_file.write(result)
 
                 
