@@ -73,10 +73,13 @@ class LetterFrequencyDistribution:
             self.X_axis(total_width)
 
     def calculate_top5_frequencies(self, frequencies):
+        
         top5_freq_table = []
+        #Appending the headers of the TOP 5 FREQ table
         top5_freq_table.append("TOP 5 FREQ")
         top5_freq_table.append("-" * 11)
 
+        # Instantiate the sorted list to sort top 5 letters by frequency then by alphabet if having the same freq
         sorted_list = SortedList()
         for letter, frequency in sorted(frequencies.items(), key=lambda x: (-x[1], x[0])):
             sorted_list.insert(SortedList.Node((letter, frequency)))
@@ -99,12 +102,12 @@ class LetterFrequencyDistribution:
         histogram = []
 
         # Populate the histogram with '*' for each letter
-        for y_index in range(25, -1, -1):  # Start from Z and go backward
+        for y_index in range(len(string.ascii_uppercase), -1, -1):  # Start from Z and go backwards #Try not to hard code range , let it adjust based on max letter count
             line = ''
             for letter in string.ascii_uppercase:  # Use ascii_uppercase for X-axis labels
                 count = letter_counts.get(letter.lower(), 0)
-                # Only print a ' * ' when
-                if count > y_index:
+                # Only print a ' * ' when letter count is greater or equal to y index 
+                if count >= y_index:
                     line += ' * '
                 else:
                     line += '   '

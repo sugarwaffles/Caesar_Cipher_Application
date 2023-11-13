@@ -108,7 +108,7 @@ class MenuOptions:
         except ValueError:
             print("Please enter a valid number.")
                      
-    def handle_encryption_decryption(self, input_type):
+    def handle_encryption_decryption(self, input_type): #1 & 2 
         while True:
             action = ''
             # Prompt the user to select either encryption or decryption
@@ -175,7 +175,7 @@ class MenuOptions:
 
 
                 
-    def analyze_letter_frequency(self):
+    def analyze_letter_frequency(self): # 3
         # Instantiate the LetterFrequencyDistribution class and prompt user for file 
         letter_dist_input = input("Please enter the file you want to analyze: ")
         
@@ -191,3 +191,7 @@ class MenuOptions:
             print(f'File not found: {letter_dist_input}')      
 
         input("\nPress enter key, to continue.....")
+        
+    def infer_caesar_cipher_key(self): # 4
+        pass
+        
