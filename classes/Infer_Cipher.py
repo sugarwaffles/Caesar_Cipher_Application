@@ -1,3 +1,5 @@
+#Name: Wilfred Djumin
+#Class: DAAA/FT/2B05
 from classes.Letter_Dist import LetterFrequencyDistribution
 import os
 class breakCaesarCipher(LetterFrequencyDistribution):

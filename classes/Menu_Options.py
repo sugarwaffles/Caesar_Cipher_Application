@@ -1,3 +1,5 @@
+#Name: Wilfred Djumin
+#Class: DAAA/FT/2B05
 import os
 from classes.Encrypt_Decrypt import CaesarCipher, CaesarCipherMessage, CaesarCipherFiles
 from classes.Letter_Dist import LetterFrequencyDistribution
@@ -97,8 +99,10 @@ class MenuOptions:
             self.analyze_encrypted_files()
         elif choice == 6:
             self.extra_option_one()
+            #Brute force way of decrypting caesar cipher
         elif choice == 7:
             self.extra_option_two()
+            #
         elif choice == 8:
             # Execute a clean exit if user presses 8
             print(

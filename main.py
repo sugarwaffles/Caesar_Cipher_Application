@@ -1,3 +1,7 @@
+#Name: Wilfred Djumin
+#Class: DAAA/FT/2B05
+
+
 from classes.Menu_Options import MenuOptions
 # from classes.Encrypt_Decrypt import CaesarCipher
 # from classes.Letter_Dist import LetterFrequencyDistribution
