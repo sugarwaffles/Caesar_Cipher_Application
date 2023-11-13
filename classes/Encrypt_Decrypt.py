@@ -1,3 +1,5 @@
+#Name: Wilfred Djumin
+#Class: DAAA/FT/2B05
 # Instantiating a Abstract Class that requires subclass to run methods such as Encrypt and Decrypt
 
 import os
