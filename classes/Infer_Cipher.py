@@ -45,13 +45,17 @@ class breakCaesarCipher(LetterFrequencyDistribution):
         
     def calculate_cipher_key(self):
         # Retrieve the top freq letter from both input and reference file, standardize by setting to lower case
-        input_letter = self.get_top_frequency_letter_input().lower()
-        reference_letter = self.get_top_frequency_letter_reference().lower()
+        input_letter = self.get_top_frequency_letter_input()
+        reference_letter = self.get_top_frequency_letter_reference()
 
-        if input_letter and reference_letter:
+        if input_letter is not None and reference_letter is not None:
+            # Standardize to lowercase
+            input_letter = input_letter.lower()
+            reference_letter = reference_letter.lower()
+
             # Calculate the difference in positions
-            input_position = ord(input_letter) - ord('A')
-            reference_position = ord(reference_letter) - ord('A')
+            input_position = ord(input_letter) - ord('a')
+            reference_position = ord(reference_letter) - ord('a')
 
             # Calculate the cipher key
             cipher_key = (input_position - reference_position) % 26
