@@ -2,12 +2,38 @@
 #Class: DAAA/FT/2B05
 import string
 
-class SortedList:
-    class Node:
-        def __init__(self, data):
-            self.data = data
-            self.nextNode = None
+# Parent Class Node
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.nextNode = None
 
+    def get_data(self):
+        return self.data
+
+    def get_next(self):
+        return self.next
+
+    def set_data(self, new_data):
+        self.data = new_data
+
+    def set_next(self, new_next):
+        self.next = new_next
+
+    def get_letter(self):
+        return self.data[0]
+
+    def get_frequency(self):
+        return self.data[1]
+
+# Child Class LetterNode
+class LetterNode(Node):
+    def __lt__(self, other):
+        return self.data[1] > other.data[1] or (self.data[1] == other.data[1] and self.data[0] < other.data[0])
+    def get_data(self):
+        return self.data
+# SortedList class
+class SortedList:
     def __init__(self):
         self.headNode = None
         self.length = 0
@@ -20,39 +46,64 @@ class SortedList:
 
     def insert(self, newNode):
         self.length += 1
-        # If the list is currently empty
+
         if self.headNode is None:
             self.headNode = newNode
             return
 
-        # Check if it is going to be new head
-        if newNode.data[1] > self.headNode.data[1]:
+        if newNode < self.headNode:
             self.__appendToHead(newNode)
             return
 
-        # Check if it is going to be inserted between any pair of Nodes (left, right)
         leftNode = self.headNode
         rightNode = self.headNode.nextNode
         while rightNode is not None:
-            if newNode.data[1] > rightNode.data[1] or (
-                newNode.data[1] == rightNode.data[1] and newNode.data[0] < rightNode.data[0]
-            ):
+            if newNode < rightNode:
                 leftNode.nextNode = newNode
                 newNode.nextNode = rightNode
                 return
             leftNode = rightNode
             rightNode = rightNode.nextNode
 
-        # Once we reach here, it must be added at the tail
         leftNode.nextNode = newNode
-    # Iterates through the nodes to     
-    def get_sorted_list(self):
-        result = []
+
+    def __str__(self):
+        output = ""
+        node = self.headNode
+        firstNode = True
+        while node is not None:
+            if firstNode:
+                output = node.get_data().__repr__()
+                firstNode = False
+            else:
+                output += (',' + node.get_data().__repr__())
+            node = node.nextNode
+        return output
+    
+    def get_data_at_index(self, index):
         current_node = self.headNode
-        while current_node is not None:
-            result.append(current_node.data)
+        current_index = 0
+
+        while current_node is not None and current_index < index:
             current_node = current_node.nextNode
-        return result
+            current_index += 1
+
+        if current_index == index and current_node is not None:
+            return current_node.get_data()
+
+        return None
+    # Inside the SortedList class
+    def get_letter_at_index(self, index):
+        data = self.get_data_at_index(index)
+        return data[0] if data else None
+    
+    def get_sorted_list(self):
+        sorted_list = []
+        node = self.headNode
+        while node is not None:
+            sorted_list.append(node.get_data())
+            node = node.nextNode
+        return sorted_list
 
 class LetterFrequencyDistribution:
     def __init__(self, filename):
@@ -86,9 +137,9 @@ class LetterFrequencyDistribution:
             
     def sort_frequencies(self):
         sorted_freq = SortedList()
-        for letter, frequency in sorted(self.frequencies.items(), key=lambda x: (-x[1], x[0])):
-            sorted_freq.insert(SortedList.Node((letter, frequency)))
-
+        for letter, frequency in self.frequencies.items():
+            sorted_freq.insert(LetterNode([letter, frequency]))
+            
         return sorted_freq
     
     def calculate_top5_frequencies(self):

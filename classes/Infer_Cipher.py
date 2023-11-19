@@ -11,7 +11,7 @@ class breakCaesarCipher(LetterFrequencyDistribution):
         
     # Inherit sorted frequencies method for letter freq of input file    
     def get_sorted_frequencies(self):
-        return super().sort_frequencies().get_sorted_list() # Call the method and then get the sorted list
+        return super().sort_frequencies() # Call the method and then get the sorted list
     
     # Sets the reference file name and the frequency of letters sorted
     def reference_file_analysis(self, reference_file):
@@ -32,16 +32,15 @@ class breakCaesarCipher(LetterFrequencyDistribution):
         return sorted_reference_freq
     
     def get_top_frequency_letter_input(self):
-        if self.sorted_input_freq:
-            return self.sorted_input_freq[0][0]
-        else:
-            return None
+        # Making use of SortedList method we added to get letter at first index, which would be the letter of max frequency
+        #print(self.sorted_input_freq.get_letter_at_index(0))
+        return self.sorted_input_freq.get_letter_at_index(0)
 
     def get_top_frequency_letter_reference(self):
-        if self.sorted_reference_freq:
-            return self.sorted_reference_freq[0][0]
-        else:
-            return None
+        # Retreive the top letter along with frequency, then return only the letter
+        top_item = self.sorted_reference_freq[0]
+        return top_item[0] if top_item else None
+
         
     def calculate_cipher_key(self):
         # Retrieve the top freq letter from both input and reference file, standardize by setting to lower case
