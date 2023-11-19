@@ -58,11 +58,8 @@ class CaesarCipherMessage(CaesarCipher):
 class CaesarCipherFiles(CaesarCipher):
     
     def __init__(self, key, filename):
-        if self.pass_filename_criteria(filename) == True:
-            super().__init__(key)
-            self._filename = filename
-        else:
-            print("Filename does not exist! ")
+        super().__init__(key)
+        self.filename = filename
 
     # Check if filename actually exists; if not, return False
     def pass_filename_criteria(self, filename):
