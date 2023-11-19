@@ -143,45 +143,46 @@ class MenuOptions:
             print(f"File {file_name} not found.")
             return None
 
-    def create_output_file(self, output_filename):
-        # Ensure the "Dataset" directory exists
-        dataset_dir = os.path.join(os.path.dirname(__file__), "..", "Dataset")
-        if not os.path.exists(dataset_dir):
-            os.makedirs(dataset_dir)
+    # def create_output_file(self, output_filename):
+    #     # Ensure the "Dataset" directory exists
+    #     dataset_dir = os.path.join(os.path.dirname(__file__), "..", "Dataset")
+    #     if not os.path.exists(dataset_dir):
+    #         os.makedirs(dataset_dir)
 
-        # Check if the output filename has a .txt extension
-        if not output_filename.lower().endswith(".txt"):
-            print("Output filename must end with '.txt'")
-            return None  # Return None if the filename doesn't end with .txt
+    #     # Check if the output filename has a .txt extension
+    #     if not output_filename.lower().endswith(".txt"):
+    #         print("Output filename must end with '.txt'")
+    #         return None  # Return None if the filename doesn't end with .txt
 
-        # Normalize the output filename to handle invalid characters
-        normalized_output_filename = os.path.normpath(output_filename)
+    #     # Normalize the output filename to handle invalid characters
+    #     normalized_output_filename = os.path.normpath(output_filename)
 
-        # Remove invalid characters from the file name
-        valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-        sanitized_output_filename = ''.join(c for c in normalized_output_filename if c in valid_chars)
+    #     # Remove invalid characters from the file name
+    #     valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    #     sanitized_output_filename = ''.join(c for c in normalized_output_filename if c in valid_chars)
 
-        # Split the sanitized output_filename into directory and file name components
-        output_dir, output_file = os.path.split(sanitized_output_filename)
+    #     # Split the sanitized output_filename into directory and file name components
+    #     output_dir, output_file = os.path.split(sanitized_output_filename)
 
-        # Create the full path for the output file in the "Dataset" directory
-        return os.path.join(dataset_dir, output_file)
+    #     # Create the full path for the output file in the "Dataset" directory
+    #     return os.path.join(dataset_dir, output_file)
 
-    def get_cipher_instance(self, cipherkey):
-        return CaesarCipherMessage(cipherkey)
+    # def get_cipher_instance(self, cipherkey):
+    #     return CaesarCipherMessage(cipherkey)
 
-    def encrypt_file(self, cipherkey, input_path, output_file):
-        output_file_path = self.create_output_file(output_file)
-        if output_file_path is not None:
-            cipher = CaesarCipherFiles(cipherkey, input_path)
-            cipher.encrypt(input_path, output_file_path)
+    # def encrypt_file(self, cipherkey, input_path, output_file):
+    #     output_file_path = self.create_output_file(output_file)
+    #     if output_file_path is not None:
+    #         cipher = CaesarCipherFiles(cipherkey, input_path)
+    #         cipher.encrypt(input_path, output_file_path)
 
-    def decrypt_file(self, cipherkey, input_path, output_file):
-        output_file_path = self.create_output_file(output_file)
-        if output_file_path is not None:
-            cipher = CaesarCipherFiles(cipherkey, input_path)
-            cipher.decrypt(input_path, output_file_path)
+    # def decrypt_file(self, cipherkey, input_path, output_file):
+    #     output_file_path = self.create_output_file(output_file)
+    #     if output_file_path is not None:
+    #         cipher = CaesarCipherFiles(cipherkey, input_path)
+    #         cipher.decrypt(input_path, output_file_path)
     # Main Handle Encryption Function when user select 1 and 2 option
+
     def handle_encryption_decryption(self, input_type):
         while True:
             action = self.get_action_input()
@@ -198,10 +199,10 @@ class MenuOptions:
                         cipherkey = self.get_valid_cipherkey()
                         output_file = self.get_non_empty_input(
                             "\nPlease enter an output file: ")
-                        self.cipher_handler.encrypt_file(cipherkey, input_path, output_file)
+                        CipherHandler.encrypt_file(cipherkey, input_path, output_file)
                 else:
                     cipherkey = self.get_valid_cipherkey()
-                    cipher = self.cipher_handler.get_cipher_instance(cipherkey)
+                    cipher = CipherHandler.get_cipher_instance(cipherkey)
                     print(cipher.encrypt(plaintext))
                 break
 
@@ -217,10 +218,10 @@ class MenuOptions:
                         cipherkey = self.get_valid_cipherkey()
                         output_file = self.get_non_empty_input(
                             "\nPlease enter an output file: ")
-                        self.cipher_handler.decrypt_file(cipherkey, input_path, output_file)
+                        CipherHandler.decrypt_file(cipherkey, input_path, output_file)
                 else:
                     cipherkey = self.get_valid_cipherkey()
-                    cipher = self.cipher_handler.get_cipher_instance(cipherkey)
+                    cipher = CipherHandler.get_cipher_instance(cipherkey)
                     print(cipher.decrypt(ciphertext))
                 break
 
@@ -266,8 +267,9 @@ class MenuOptions:
             else:
                 cipherkey = cipher_key
                 output_file = self.get_non_empty_input("\nPlease enter an output file: ")
-                self.cipher_handler.decrypt_file(cipherkey, input_file_path, output_file)
+                CipherHandler.decrypt_file(cipherkey, input_file_path, output_file)
             break
+
 
     def analyze_encrypted_files(self):
         reference_file = os.path.join(os.path.dirname(__file__), "..", "Dataset", "englishtext.txt")

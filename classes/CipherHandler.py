@@ -35,10 +35,12 @@ class CipherHandler:
     def get_cipher_instance(self, cipherkey):
         return CaesarCipherFiles(cipherkey)
 
-    def encrypt_file(self, cipherkey, input_path, output_file):
-        output_file_path = self.create_output_file(output_file)
+    
+    @staticmethod
+    def encrypt_file(cipherkey, input_path, output_file):
+        output_file_path = CipherHandler.create_output_file(output_file)
         if output_file_path is not None:
-            cipher = self.get_cipher_instance(cipherkey)
+            cipher = CaesarCipherFiles(cipherkey, input_path)
             cipher.encrypt(input_path, output_file_path)
 
     @staticmethod
