@@ -2,7 +2,7 @@
 #Class: DAAA/FT/2B05
 from classes.Letter_Dist import LetterFrequencyDistribution
 import os
-class breakCaesarCipher(LetterFrequencyDistribution):
+class BreakCaesarCipher(LetterFrequencyDistribution):
     def __init__(self, input_file):
         super().__init__(input_file)
         self.reference_file = None
@@ -13,11 +13,32 @@ class breakCaesarCipher(LetterFrequencyDistribution):
     def get_sorted_frequencies(self):
         return super().sort_frequencies() # Call the method and then get the sorted list
     
-    # Sets the reference file name and the frequency of letters sorted
+    def is_valid_reference_file(self, reference_file):
+        try:
+            with open(reference_file, 'r') as file:
+                lines = file.readlines()
+
+            # Check if each line can be split into two parts by a comma
+            for line in lines:
+                parts = line.split(',')
+                if len(parts) != 2:
+                    return False
+
+                # Check if the second part is a valid float
+                float(parts[1])
+
+            return True
+        except Exception as e:
+            return False
+
     def reference_file_analysis(self, reference_file):
+        if not self.is_valid_reference_file(reference_file):
+            print("Invalid reference file format. Each line should contain a letter and a frequency separated by a comma.")
+            return None
+
         self.reference_file = reference_file
         self.sorted_reference_freq = self.sort_reference_file()
-        
+        return self.sorted_reference_freq  # Return the sorted frequencies
     # Sorts the letters by frequency in the reference file
     def sort_reference_file(self):
         with open(self.reference_file, 'r') as file:
