@@ -68,15 +68,16 @@ class CaesarCipherFiles(CaesarCipher):
         else:
             return False
 
-    def encrypt(self, filename, output_filename):
-        with open(filename, "r") as file:
+    # Inside CaesarCipherFiles class
+    def encrypt(self,input_filename, output_filename):
+        with open(input_filename, "r") as file:
             file_content = file.read()
             result = self.transform_message(file_content, "encrypt")
             with open(output_filename, "w") as output_file:
                 output_file.write(result)
 
-    def decrypt(self, filename, output_filename):
-        with open(filename, "r") as file:
+    def decrypt(self,input_filename, output_filename):
+        with open(input_filename, "r") as file:
             file_content = file.read()
             result = self.transform_message(file_content, "decrypt")
             with open(output_filename, "w") as output_file:

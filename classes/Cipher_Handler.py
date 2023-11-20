@@ -1,10 +1,10 @@
 import os
 import string
-from classes.Encrypt_Decrypt import CaesarCipherFiles
+from classes.Encrypt_Decrypt import CaesarCipherFiles,CaesarCipherMessage
 
 class CipherHandler:
     def __init__(self):
-        # You can add any initialization logic here
+
         pass
 
     @staticmethod
@@ -31,9 +31,20 @@ class CipherHandler:
 
         # Create the full path for the output file in the "Dataset" directory
         return os.path.join(dataset_dir, output_file)
-
-    def get_cipher_instance(self, cipherkey):
-        return CaesarCipherFiles(cipherkey)
+    
+    @staticmethod
+    def get_cipher_instance(cipherkey, input_type, filename=None):
+        if input_type == 'message':
+            return CaesarCipherMessage(cipherkey)
+        elif input_type == 'file':
+            if filename is not None:
+                return CaesarCipherFiles(cipherkey, filename)
+            else:
+                # Handle the case where filename is None or not provided
+                return None
+        else:
+            # Handle other input types if needed
+            return None
 
     
     @staticmethod

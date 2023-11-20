@@ -4,13 +4,15 @@ import string
 import os
 from classes.Encrypt_Decrypt import CaesarCipher, CaesarCipherMessage, CaesarCipherFiles
 from classes.Letter_Dist import LetterFrequencyDistribution
-from classes.Infer_Cipher import breakCaesarCipher
+from classes.Infer_Cipher import BreakCaesarCipher
 from classes.Analyze_Sort_Files import AnalyzeSortFiles
-from classes.CipherHandler import CipherHandler
+from classes.Cipher_Handler import CipherHandler
+from classes.Input_Handler import InputHandler
 
 class MenuOptions:
     def __init__(self):
         self.cipher_handler = CipherHandler()
+        self.input_handler = InputHandler()
         # dictionary storing options from 1 - 8
         self.menu_options = {
             1: 'Encrypt/Decrypt Message',
@@ -25,11 +27,12 @@ class MenuOptions:
     # prevents users from just pressing "Enter" for certain inputs
 
     def get_non_empty_input(self, prompt):
-        user_input = input(prompt)
-        while not user_input.strip():  # Check if the input is empty or contains only whitespace
-            print("Input cannot be empty. Please try again.")
-            user_input = input(prompt)
-        return user_input
+        return self.input_handler.get_non_empty_input(prompt)
+    #     user_input = input(prompt)
+    #     while not user_input.strip():  # Check if the input is empty or contains only whitespace
+    #         print("Input cannot be empty. Please try again.")
+    #         user_input = input(prompt)
+    #     return user_input
 
     def start(self):
         # print essential introduction
@@ -131,22 +134,24 @@ class MenuOptions:
         return action
 
     def get_file_path(self, file_name):
-        file_path = os.path.join(os.path.dirname(__file__), "..", "Dataset")
+        return self.input_handler.get_file_path(file_name)
+        # file_path = os.path.join(os.path.dirname(__file__), "..", "Dataset")
 
-        # Get the list of files in the directory
-        files_in_directory = [f for f in os.listdir(file_path)]
+        # # Get the list of files in the directory
+        # files_in_directory = [f for f in os.listdir(file_path)]
 
-        # Check if the exact file name is in the list
-        if file_name in files_in_directory:
-            return os.path.join(file_path, file_name)
-        else:
-            print(f"File {file_name} not found.")
-            return None
+        # # Check if the exact file name is in the list
+        # if file_name in files_in_directory:
+        #     return os.path.join(file_path, file_name)
+        # else:
+        #     print(f"File {file_name} not found.")
+        #     return None
     def input_file(self):
-        return input("Please enter the file you want to analyze: ")
+        return self.input_handler.input_file()
     
     def press_enter(self):
-        return input("\nPress enter key to continue...")
+        return self.input_handler.press_enter()
+    
     # def create_output_file(self, output_filename):
     #     # Ensure the "Dataset" directory exists
     #     dataset_dir = os.path.join(os.path.dirname(__file__), "..", "Dataset")
@@ -191,44 +196,33 @@ class MenuOptions:
         while True:
             action = self.get_action_input()
 
-            if action == "e":
-                plaintext = self.get_non_empty_input(
-                    f"\nPlease type {input_type} you want to encrypt: ")
+            if action not in ('e', 'd'):
+                print("Invalid action. Please enter 'e' for encrypt or 'd' for decrypt.")
+                continue
 
-                if input_type == 'file':
-                    input_path = self.get_file_path(plaintext)
-                    if input_path is None:
-                        break
-                    else:
-                        cipherkey = self.get_valid_cipherkey()
-                        output_file = self.get_non_empty_input(
-                            "\nPlease enter an output file: ")
+            user_input_prompt = f"\nPlease type {input_type} you want to {('encrypt' if action == 'e' else 'decrypt')}: "
+            user_input = self.get_non_empty_input(user_input_prompt)
+
+            if input_type == 'file':
+                input_path = self.get_file_path(user_input)
+                if input_path is None:
+                    break
+                else:
+                    cipherkey = self.get_valid_cipherkey()
+                    output_file = self.get_non_empty_input("\nPlease enter an output file: ")
+                    if action == 'e':
                         CipherHandler.encrypt_file(cipherkey, input_path, output_file)
-                else:
-                    cipherkey = self.get_valid_cipherkey()
-                    cipher = CipherHandler.get_cipher_instance(cipherkey)
-                    print(cipher.encrypt(plaintext))
-                break
-
-            elif action == 'd':
-                ciphertext = self.get_non_empty_input(
-                    f"\nPlease type {input_type} you want to decrypt: ")
-
-                if input_type == 'file':
-                    input_path = self.get_file_path(ciphertext)
-                    if input_path is None:
-                        break
                     else:
-                        cipherkey = self.get_valid_cipherkey()
-                        output_file = self.get_non_empty_input(
-                            "\nPlease enter an output file: ")
                         CipherHandler.decrypt_file(cipherkey, input_path, output_file)
+            else:
+                cipherkey = self.get_valid_cipherkey()
+                cipher = CipherHandler.get_cipher_instance(cipherkey, input_type)
+                if action == 'e':
+                    print(cipher.encrypt(user_input))
                 else:
-                    cipherkey = self.get_valid_cipherkey()
-                    cipher = CipherHandler.get_cipher_instance(cipherkey)
-                    print(cipher.decrypt(ciphertext))
-                break
-
+                    print(cipher.decrypt(user_input))
+            
+            break
     def analyze_letter_frequency(self):
         while True:
             letter_dist_input = self.input_file()
@@ -250,7 +244,7 @@ class MenuOptions:
             if input_file_path is None:
                 break
 
-            cipher_breaker = breakCaesarCipher(input_file_path)
+            cipher_breaker = BreakCaesarCipher(input_file_path)
 
             input_reference_file = input("\nPlease enter the reference frequencies file: ")
             file_path_ref = self.get_file_path(input_reference_file)
@@ -258,7 +252,11 @@ class MenuOptions:
             if file_path_ref is None:
                 break
 
-            cipher_breaker.reference_file_analysis(file_path_ref)
+            # Check if the reference file has a valid format
+            sorted_reference_freq = cipher_breaker.reference_file_analysis(file_path_ref)
+            if sorted_reference_freq is None:
+                break
+
             cipher_key = cipher_breaker.calculate_cipher_key()
 
             print(f"The inferred caesar cipher key is: {cipher_key}")
@@ -289,6 +287,6 @@ class MenuOptions:
             analyzer = AnalyzeSortFiles(folder_path)
             analyzer.analyze_and_sort_files()
 
-            print("Batch decryption completed successfully.")
+            print("\nBatch decryption completed successfully.")
             self.press_enter()
             break
