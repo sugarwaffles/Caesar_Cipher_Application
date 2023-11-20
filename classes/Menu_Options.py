@@ -142,7 +142,11 @@ class MenuOptions:
         else:
             print(f"File {file_name} not found.")
             return None
-
+    def input_file(self):
+        return input("Please enter the file you want to analyze: ")
+    
+    def press_enter(self):
+        return input("\nPress enter key to continue...")
     # def create_output_file(self, output_filename):
     #     # Ensure the "Dataset" directory exists
     #     dataset_dir = os.path.join(os.path.dirname(__file__), "..", "Dataset")
@@ -227,20 +231,20 @@ class MenuOptions:
 
     def analyze_letter_frequency(self):
         while True:
-            letter_dist_input = input("Please enter the file you want to analyze: ")
+            letter_dist_input = self.input_file()
             file_path = self.get_file_path(letter_dist_input)
             if file_path is None:
                 break
             else:
                 letter_dist = LetterFrequencyDistribution(file_path)
                 letter_dist.analyze_file()
-                input("\nPress enter key to continue...")
+                self.press_enter()
 
             break
 
     def break_caesar_cipher(self):
         while True:
-            input_file_analyze = input("\nPlease enter the file you want to analyze: ")
+            input_file_analyze = self.input_file()
             input_file_path = self.get_file_path(input_file_analyze)
 
             if input_file_path is None:
@@ -286,5 +290,5 @@ class MenuOptions:
             analyzer.analyze_and_sort_files()
 
             print("Batch decryption completed successfully.")
-            input("Press enter key, to continue.... ")
+            self.press_enter()
             break
