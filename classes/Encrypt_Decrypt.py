@@ -38,8 +38,8 @@ class CaesarCipher:
 
     def decrypt(self, message):
         raise NotImplementedError("Subclass / Class must implement abstract method decrypt")
-    @classmethod
-    def brute_force_decrypt(cls, ciphertext):
+    # @classmethod
+    # def brute_force_decrypt(cls, ciphertext):
         english_letter_frequencies = {
             'e': 12.02, 't': 9.10, 'a': 8.12, 'o': 7.68, 'i': 7.31,
             'n': 6.95, 's': 6.28, 'r': 6.02, 'h': 5.92, 'd': 4.32,
@@ -55,7 +55,7 @@ class CaesarCipher:
         for key in range(26):
             instance = cls(key)
             decrypted_message = instance.transform_message(ciphertext, "decrypt")
-
+            print(decrypted_message)
             # Calculate the score based on letter frequencies
             score = 0
             for letter in decrypted_message:
@@ -75,15 +75,24 @@ class CaesarCipherMessage(CaesarCipher):
     def __init__(self, key):
         super().__init__(key)
         
-    def encrypt(self, message):
-        result = self.transform_message(message, "encrypt")
-        output = f"\nPlaintext:\t{message}\nCiphertext:\t{result}"
-        return output
+    def format_output(self, message, result, transformation):
+        if transformation == 'encrypt':
+            return f"\nPlaintext:\t{message}\nCiphertext:\t{result}"
+        else:
+            return f"\nCiphertext:\t{message}\nPlaintext:\t{result}"
 
-    def decrypt(self, message):
-        result = self.transform_message(message, "decrypt")
-        output = f"\nCiphertext:\t{message}\nPlaintext:\t{result}"
-        return output
+    def encrypt(self, message, format_output=True):
+        result = self.transform_message(message,"encrypt")
+        if format_output:
+            return self.format_output(message, result, "encrypt")
+        else:
+            return result
+    def decrypt(self, message, format_output=True):
+        result = self.transform_message(message,"decrypt")
+        if format_output:
+            return self.format_output(message, result, "decrypt")
+        else:
+            return result
         
 # Inherits from CaesarCipher parent class     
 class CaesarCipherFiles(CaesarCipher):
@@ -115,4 +124,3 @@ class CaesarCipherFiles(CaesarCipher):
                 output_file.write(result)
 
     
-#CaesarCipher.brute_force_decrypt('pm ol ohk hufaopun jvumpkluaphs av zhf, ol dyval pa pu jpwoly, aoha pz, if zv johunpun aol vykly vm aol slaalyz vm aol hswohila, aoha uva h dvyk jvbsk il thkl vba.')

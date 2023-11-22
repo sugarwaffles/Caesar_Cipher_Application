@@ -1,5 +1,5 @@
-#Name: Wilfred Djumin
-#Class: DAAA/FT/2B05
+# Name: Wilfred Djumin
+# Class: DAAA/FT/2B05
 import string
 import os
 from classes.Encrypt_Decrypt import CaesarCipher, CaesarCipherMessage, CaesarCipherFiles
@@ -8,6 +8,8 @@ from classes.Infer_Cipher import BreakCaesarCipher
 from classes.Analyze_Sort_Files import AnalyzeSortFiles
 from classes.Cipher_Handler import CipherHandler
 from classes.Input_Handler import InputHandler
+from classes.Dictionary_Attack import DictionaryAttack, PureBruteForceAttack
+
 
 class MenuOptions:
     def __init__(self):
@@ -20,13 +22,13 @@ class MenuOptions:
             3: 'Analyze letter frequency distribution',
             4: 'Infer Caesar cipher key from file',
             5: 'Analyze and sort encrypted files',
-            6: 'Brute Decrypt Caesar Cipher',
+            6: 'Brute Decrypt Caesar Cipher with English Dictionary / Words',
             7: 'Extra Option Two',
             8: 'Exit'
         }
+
     def get_menu_options(self):
         return self.__menu_options
-    
 
     def start(self):
         # print essential introduction
@@ -60,7 +62,8 @@ class MenuOptions:
                         f'You chose option {choice}: {self.get_menu_options().get(choice)}. Confirm? (y/n): ').lower()
 
                     # Use confirmation_validator and check if the result is not None
-                    confirmed_choice = self.confirmation_validator(confirm_choice, choice)
+                    confirmed_choice = self.confirmation_validator(
+                        confirm_choice, choice)
                     if confirmed_choice is not None:
                         return confirmed_choice
 
@@ -81,12 +84,12 @@ class MenuOptions:
         elif choice == 3:
             self.analyze_letter_frequency()
         elif choice == 4:
-            self.break_caesar_cipher()
+            self.infer_caesar_key_and_decrypt()
         elif choice == 5:
             self.analyze_encrypted_files()
         elif choice == 6:
-            self.extra_option_one()
-            #Brute force way of decrypting caesar cipher
+            self.dictionary_attack()
+            # Brute force way of decrypting caesar cipher
         elif choice == 7:
             self.extra_option_two()
             #
@@ -96,7 +99,6 @@ class MenuOptions:
                 "Bye, thanks for using ST1507 DSAA: Caesar Cipher Encrypted Message Analyzer")
             exit(0)
 
-
     def get_non_empty_input(self, prompt):
         return self.input_handler.get_non_empty_input(prompt)
 
@@ -105,19 +107,19 @@ class MenuOptions:
 
     def input_file(self):
         return self.input_handler.input_file()
-    
+
     def press_enter(self):
         return self.input_handler.press_enter()
 
-    def confirmation_validator(self,input,choice):
-        return self.input_handler.confirmation_validator(input,choice)
+    def confirmation_validator(self, input, choice):
+        return self.input_handler.confirmation_validator(input, choice)
 
     def get_valid_cipherkey(self):
         return self.cipher_handler.get_valid_cipherkey()
 
     def get_action_input(self):
         return self.cipher_handler.get_action_input()
-    
+
     # This whole function handles choices 1 & 2
     def handle_encryption_decryption(self, input_type):
         while True:
@@ -133,15 +135,19 @@ class MenuOptions:
                     break
 
                 cipherkey = self.get_valid_cipherkey()
-                output_file = self.get_non_empty_input("\nPlease enter an output file: ")
+                output_file = self.get_non_empty_input(
+                    "\nPlease enter an output file: ")
 
                 if action == 'e':
-                    self.cipher_handler.encrypt_file(cipherkey, input_path, output_file)
+                    self.cipher_handler.encrypt_file(
+                        cipherkey, input_path, output_file)
                 else:
-                    self.cipher_handler.decrypt_file(cipherkey, input_path, output_file)
+                    self.cipher_handler.decrypt_file(
+                        cipherkey, input_path, output_file)
             else:
                 cipherkey = self.get_valid_cipherkey()
-                cipher = self.cipher_handler.get_cipher_instance(cipherkey, input_type)
+                cipher = self.cipher_handler.get_cipher_instance(
+                    cipherkey, input_type)
 
                 if action == 'e':
                     print(cipher.encrypt(user_input))
@@ -150,6 +156,7 @@ class MenuOptions:
 
             break
     # This whole function handles choice 3
+
     def analyze_letter_frequency(self):
         while True:
             letter_dist_input = self.input_file()
@@ -163,24 +170,26 @@ class MenuOptions:
 
             break
     # This whole function handles choice 4
-    def break_caesar_cipher(self):
+
+    def infer_caesar_key_and_decrypt(self):
         while True:
             input_file_analyze = self.input_file()
             input_file_path = self.get_file_path(input_file_analyze)
-
             if input_file_path is None:
                 break
 
             cipher_breaker = BreakCaesarCipher(input_file_path)
 
-            input_reference_file = input("\nPlease enter the reference frequencies file: ")
+            input_reference_file = input(
+                "\nPlease enter the reference frequencies file: ")
             file_path_ref = self.get_file_path(input_reference_file)
 
             if file_path_ref is None:
                 break
 
             # Check if the reference file has a valid format
-            sorted_reference_freq = cipher_breaker.reference_file_analysis(file_path_ref)
+            sorted_reference_freq = cipher_breaker.reference_file_analysis(
+                file_path_ref)
             if sorted_reference_freq is None:
                 break
 
@@ -188,28 +197,34 @@ class MenuOptions:
 
             print(f"The inferred caesar cipher key is: {cipher_key}")
 
-            prompt_for_decryption = self.get_non_empty_input("\nWould you want to decrypt this file using the key? y/n: ")
-            
-            if self.confirmation_validator(prompt_for_decryption, choice = None):
+            prompt_for_decryption = self.get_non_empty_input(
+                "\nWould you want to decrypt this file using the key? y/n: ")
+
+            if self.confirmation_validator(prompt_for_decryption, choice=None):
                 cipherkey = cipher_key
-                output_file = self.get_non_empty_input("\nPlease enter an output file: ")
-                CipherHandler.decrypt_file(cipherkey, input_file_path, output_file)
+                output_file = self.get_non_empty_input(
+                    "\nPlease enter an output file: ")
+                CipherHandler.decrypt_file(
+                    cipherkey, input_file_path, output_file)
                 self.press_enter()
                 break
             else:
-                print(f"Selected '{prompt_for_decryption}', back to menu options...")
+                print(
+                    f"Selected '{prompt_for_decryption}', back to menu options...")
                 break
 
     # This whole function handles choice 5
     def analyze_encrypted_files(self):
-        reference_file = os.path.join(os.path.dirname(__file__), "..", "Dataset", "englishtext.txt")
 
         while True:
-            folder_name = input("\nPlease enter the folder name for batch decryption: ")
+            folder_name = input(
+                "\nPlease enter the folder name for batch decryption: ")
 
-            folder_path = os.path.join(os.path.dirname(__file__), "..", folder_name)
+            folder_path = os.path.join(
+                os.path.dirname(__file__), "..", folder_name)
             if not os.path.exists(folder_path) or not os.path.isdir(folder_path):
-                print(f"Folder '{folder_name}' not found. Please enter a valid folder name.")
+                print(
+                    f"Folder '{folder_name}' not found. Please enter a valid folder name.")
                 break
 
             analyzer = AnalyzeSortFiles(folder_path)
@@ -218,3 +233,94 @@ class MenuOptions:
             print("\nBatch decryption completed successfully.")
             self.press_enter()
             break
+    # Option 6
+    def dictionary_attack(self):
+        while True:
+            # Handle input file
+            input_file = self.input_file()
+            input_file_path = self.get_file_path(input_file)
+            if input_file_path is None:
+                break
+
+            # Initialize file_path_ref
+            file_path_ref = None
+
+            # Handle reference file
+            prompt_use_dictionary = input(
+                "\nWould you like to use a reference (List of English words) for the decryption? Y / N: ")
+            confirm_prompt = self.confirmation_validator(
+                prompt_use_dictionary, choice=None)
+            if confirm_prompt is None:
+                break
+            # User wants to use a reference file
+            elif confirm_prompt:
+                # Ask for default or user-specified reference file
+                use_default_dict = input(
+                    "\nWould you like to use the default English words dictionary (479k words)? Y / N: ")
+                use_default_dict = self.confirmation_validator(
+                    use_default_dict, choice=None)
+                if use_default_dict is None:
+                    break
+
+                # Set file_path_ref based on the user's choice
+                if use_default_dict:
+                    file_path_ref = self.get_file_path("all-words.txt")
+                else:
+                    reference_file_selection = input(
+                        "\nPlease enter the reference dict file: ")
+                    file_path_ref = self.get_file_path(
+                        reference_file_selection)
+
+                    if file_path_ref is None:
+                        break
+
+            # User wants to perform a pure brute force attack
+            else:
+                print(f"\nUsing pure brute force decryption...")
+                file_path_ref = None
+
+            # Get the output file from the user
+            output_file = self.get_non_empty_input(
+                "\nPlease enter an output file: ")
+
+            if file_path_ref:
+                # Create an instance of the DictionaryAttack class
+                dict_attack = DictionaryAttack(input_file_path, file_path_ref)
+                # Perform the dictionary attack
+                decrypted_text, key = dict_attack.dictionary_attack_file(
+                    input_file_path, use_dictionary=True, output_file=output_file)
+            else:
+                # Create an instance of the PureBruteForceAttack class
+                brute_force_attack = PureBruteForceAttack(input_file_path)
+                # Perform the pure brute force attack
+                (best_result, all_results) = brute_force_attack.perform_attack()
+                # print(all_results)
+
+                # Get the ciphertext from the PureBruteForceAttack instance
+                ciphertext = brute_force_attack.read_ciphertext()
+
+                # Write the results to the output file
+                brute_force_attack.write_results_to_file(
+                    output_file, best_result, all_results)
+
+                # Unpack the best result
+                decrypted_text, key, _ = best_result
+
+            # If user uses
+            if decrypted_text is not None and file_path_ref is not None:
+                print(f"\nDecrypted Text:\n{decrypted_text}")
+                print(f"\nCipher Key: {key}")
+                print(f"\nOutput File Name: {output_file}")
+                # Add the final results to an output file
+                break
+            else:
+                # If user uses own reference dict/words file
+                if file_path_ref is not None:
+                    print(
+                        "Decryption unsuccessful, please try using the full English dictionary for better accuracy!")
+                    break
+                # If user uses pure brute force
+                else:
+                    print(
+                        f"Check the output file: '{output_file}' for a recognizable english sentence! ")
+                    break

@@ -46,15 +46,15 @@ class InputHandler:
 
     def confirmation_validator(self, user_input, choice=None):
         if choice is not None:
-            # Handling confirmation for menu choices
-            if user_input.lower() == 'y':
-                return choice
-            elif user_input.lower() == 'n':
-                print('Operation canceled. Please choose again.\n')
-                return None
-            else:
-                print('Error: Invalid confirmation. Please enter "y" for yes or "n" for no.\n')
-                return None
+                # Handling confirmation for menu choices
+                if user_input.lower() == 'y':
+                    return choice
+                elif user_input.lower() == 'n':
+                    print('Operation canceled. Please choose again.\n')
+                    return None
+                else:
+                    print('Error: Invalid confirmation. Please enter "y" for yes or "n" for no.\n')
+                    return None
         else:
             # Handling confirmation for other scenarios
             if user_input.lower() == 'y':
