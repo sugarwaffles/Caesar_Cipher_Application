@@ -2,6 +2,7 @@
 #Class: DAAA/FT/2B05
 from classes.Letter_Dist import LetterFrequencyDistribution
 import os
+import string
 class BreakCaesarCipher(LetterFrequencyDistribution):
     def __init__(self, input_file):
         super().__init__(input_file)
@@ -45,13 +46,12 @@ class BreakCaesarCipher(LetterFrequencyDistribution):
             lines = file.readlines()
 
         # Extract letters and frequencies from each line
-        reference_freq = [(line.split(',')[0], float(line.split(',')[1])) for line in lines]
+        reference_freq = [(line.split(',')[0].lower(), float(line.split(',')[1])) for line in lines]
 
         # Sort by frequency in descending order
         sorted_reference_freq = sorted(reference_freq, key=lambda x: x[1], reverse=True)
 
         return sorted_reference_freq
-    
     def get_top_frequency_letter_input(self):
         # Making use of SortedList method we added to get letter at first index, which would be the letter of max frequency
         #print(self.sorted_input_freq.get_letter_at_index(0))
@@ -62,34 +62,44 @@ class BreakCaesarCipher(LetterFrequencyDistribution):
         top_item = self.sorted_reference_freq[0]
         return top_item[0] if top_item else None
 
-        
+    def calculate_shift(self, input_letter, reference_letter):
+        # Calculate the position difference and the cipher key
+        input_position = ord(input_letter) - ord('a')
+        reference_position = ord(reference_letter) - ord('a')
+        cipher_key = (input_position - reference_position) % 26
+
+        return cipher_key
     def calculate_cipher_key(self):
-        # Retrieve the top freq letter from both input and reference file, standardize by setting to lower case
-        input_letter = self.get_top_frequency_letter_input()
-        reference_letter = self.get_top_frequency_letter_reference()
-
-        if input_letter is not None and reference_letter is not None:
-            # Standardize to lowercase
-            input_letter = input_letter.lower()
-            reference_letter = reference_letter.lower()
-
-            # Calculate the difference in positions
-            input_position = ord(input_letter) - ord('a')
-            reference_position = ord(reference_letter) - ord('a')
-
-            # Calculate the cipher key
-            cipher_key = (input_position - reference_position) % 26
-
-            return cipher_key
-        else:
+        # Check if reference file has been provided and analyzed
+        if not self.reference_file or not self.sorted_reference_freq:
+            print("Reference file not provided or not analyzed.")
             return None
-        
 
-# # Example usage
-# cipher_breaker = breakCaesarCipher(os.path.join(os.path.dirname(__file__), "..", "Dataset",'test2.txt'))
-# cipher_breaker.reference_file_analysis(os.path.join(os.path.dirname(__file__), "..", "Dataset",'englishtext.txt'))
+        # # Initialize a dictionary to store the frequency counts of cipher keys
+        cipher_key_counts = {}
 
-# # Access the sorted reference frequencies
-# sorted_reference = cipher_breaker.sorted_reference_freq
-# sorted_freq_input = cipher_breaker.sort_frequencies()
-# print(cipher_breaker.get_top_frequency_letter_input(),cipher_breaker.get_top_frequency_letter_reference())
+        # Get the top 5 frequencies from the input file
+        top5_input_freq = self.sorted_input_freq.get_sorted_list()
+
+        # Get the sorted reference frequencies as a dictionary
+        reference_freq_dict = dict(self.sorted_reference_freq)
+
+        # Iterate over the top 5 letters
+        for (input_letter, input_freq), (reference_letter, reference_freq) in zip(top5_input_freq.items(), reference_freq_dict.items()):
+            if input_freq == 0:
+                continue
+
+            # Find the corresponding letter in the reference frequencies
+            cipher_key = self.calculate_shift(input_letter, reference_letter)
+
+            # Add the cipher key to the counts
+            cipher_key_counts[cipher_key] = cipher_key_counts.get(cipher_key, 0) + 1
+            #print(input_letter, reference_letter, cipher_key)
+            #print(cipher_key_counts)
+
+        # Find the most common cipher key
+        most_common_key = max(cipher_key_counts, key=cipher_key_counts.get)
+
+        return most_common_key
+
+

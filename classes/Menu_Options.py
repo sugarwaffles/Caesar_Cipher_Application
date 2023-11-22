@@ -14,25 +14,19 @@ class MenuOptions:
         self.cipher_handler = CipherHandler()
         self.input_handler = InputHandler()
         # dictionary storing options from 1 - 8
-        self.menu_options = {
+        self.__menu_options = {
             1: 'Encrypt/Decrypt Message',
             2: 'Encrypt/Decrypt File',
             3: 'Analyze letter frequency distribution',
             4: 'Infer Caesar cipher key from file',
             5: 'Analyze and sort encrypted files',
-            6: 'Extra Option One',
+            6: 'Brute Decrypt Caesar Cipher',
             7: 'Extra Option Two',
             8: 'Exit'
         }
-    # prevents users from just pressing "Enter" for certain inputs
-
-    def get_non_empty_input(self, prompt):
-        return self.input_handler.get_non_empty_input(prompt)
-    #     user_input = input(prompt)
-    #     while not user_input.strip():  # Check if the input is empty or contains only whitespace
-    #         print("Input cannot be empty. Please try again.")
-    #         user_input = input(prompt)
-    #     return user_input
+    def get_menu_options(self):
+        return self.__menu_options
+    
 
     def start(self):
         # print essential introduction
@@ -45,48 +39,36 @@ class MenuOptions:
         print('*  - Done By: Wilfred Djumin (2237503)                                *')
         print('*  - Class DAAA/FT/2B/05                                              *')
         print('*********************************************************************** \n')
-        # Prompt user to press "Enter" key
-        starting_input = input("Press Enter to continue...")
-        # Prompt user to press "Enter" key
+        self.press_enter()
 
     def print_menu(self):
         print("\nPlease select your choice: (1,2,3,4,5,6,7,8)")
         # Looping through dictionary to list options to user
-        for choice, description in self.menu_options.items():
+        for choice, description in self.get_menu_options().items():
             print(f"\t {choice}. {description}")
 
     def get_choice(self):
-
-        # reference: https://python-course.eu/python-tutorial/errors-and-exception-handling.php
-
         while True:
-
             try:
-
                 # Prompt user for choice
                 choice = int(input("Enter your choice: "))
 
-                # Check if the choice exist in the menu_options dictionary
-                if choice in self.menu_options:
-
+                # Check if the choice exists in the menu_options dictionary
+                if choice in self.get_menu_options():
                     # Ask user for confirmation
                     confirm_choice = input(
-                        f'You chose option {choice}: {self.menu_options.get(choice)}. Confirm? (y/n): ').lower()
+                        f'You chose option {choice}: {self.get_menu_options().get(choice)}. Confirm? (y/n): ').lower()
 
-                    if confirm_choice == 'y':
-                        # Return the inputted choice if confirmed
-                        return choice
-                    elif confirm_choice == 'n':
-                        print('Operation canceled. Please choose again.\n')
-                    else:
-                        print(
-                            'Invalid confirmation. Please enter "y" for yes or "n" for no.\n')
+                    # Use confirmation_validator and check if the result is not None
+                    confirmed_choice = self.confirmation_validator(confirm_choice, choice)
+                    if confirmed_choice is not None:
+                        return confirmed_choice
 
                 # If not, prompt user to re-enter a number between 1 and 8
                 else:
                     print("Invalid choice. Please enter a number between 1 and 8.\n")
 
-            # raise ValueError if user does not input a number/integer
+            # Raise ValueError if the user does not input a number/integer
             except ValueError:
                 print("Invalid input. Please enter a valid number.\n")
 
@@ -114,115 +96,60 @@ class MenuOptions:
                 "Bye, thanks for using ST1507 DSAA: Caesar Cipher Encrypted Message Analyzer")
             exit(0)
 
-    # Methods related to Caesar Cipher For Messages and Files options 1 and 2 as well as other classes
-    ##
-    def get_valid_cipherkey(self):
-        while True:
-            try:
-                cipherkey = int(input("\nEnter the cipher key: "))
-                return cipherkey
-            except ValueError:
-                print("Please enter a valid number.")
 
-    def get_action_input(self):
-        action = ''
-        while action != "e" and action != 'd':
-            action = input(
-                '\nEnter "E" for Encrypt or "D" for Decrypt: ').lower()
-            if action != "e" and action != 'd':
-                print("Only enter either 'E' or 'D'")
-        return action
+    def get_non_empty_input(self, prompt):
+        return self.input_handler.get_non_empty_input(prompt)
 
     def get_file_path(self, file_name):
         return self.input_handler.get_file_path(file_name)
-        # file_path = os.path.join(os.path.dirname(__file__), "..", "Dataset")
 
-        # # Get the list of files in the directory
-        # files_in_directory = [f for f in os.listdir(file_path)]
-
-        # # Check if the exact file name is in the list
-        # if file_name in files_in_directory:
-        #     return os.path.join(file_path, file_name)
-        # else:
-        #     print(f"File {file_name} not found.")
-        #     return None
     def input_file(self):
         return self.input_handler.input_file()
     
     def press_enter(self):
         return self.input_handler.press_enter()
+
+    def confirmation_validator(self,input,choice):
+        return self.input_handler.confirmation_validator(input,choice)
+
+    def get_valid_cipherkey(self):
+        return self.cipher_handler.get_valid_cipherkey()
+
+    def get_action_input(self):
+        return self.cipher_handler.get_action_input()
     
-    # def create_output_file(self, output_filename):
-    #     # Ensure the "Dataset" directory exists
-    #     dataset_dir = os.path.join(os.path.dirname(__file__), "..", "Dataset")
-    #     if not os.path.exists(dataset_dir):
-    #         os.makedirs(dataset_dir)
-
-    #     # Check if the output filename has a .txt extension
-    #     if not output_filename.lower().endswith(".txt"):
-    #         print("Output filename must end with '.txt'")
-    #         return None  # Return None if the filename doesn't end with .txt
-
-    #     # Normalize the output filename to handle invalid characters
-    #     normalized_output_filename = os.path.normpath(output_filename)
-
-    #     # Remove invalid characters from the file name
-    #     valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-    #     sanitized_output_filename = ''.join(c for c in normalized_output_filename if c in valid_chars)
-
-    #     # Split the sanitized output_filename into directory and file name components
-    #     output_dir, output_file = os.path.split(sanitized_output_filename)
-
-    #     # Create the full path for the output file in the "Dataset" directory
-    #     return os.path.join(dataset_dir, output_file)
-
-    # def get_cipher_instance(self, cipherkey):
-    #     return CaesarCipherMessage(cipherkey)
-
-    # def encrypt_file(self, cipherkey, input_path, output_file):
-    #     output_file_path = self.create_output_file(output_file)
-    #     if output_file_path is not None:
-    #         cipher = CaesarCipherFiles(cipherkey, input_path)
-    #         cipher.encrypt(input_path, output_file_path)
-
-    # def decrypt_file(self, cipherkey, input_path, output_file):
-    #     output_file_path = self.create_output_file(output_file)
-    #     if output_file_path is not None:
-    #         cipher = CaesarCipherFiles(cipherkey, input_path)
-    #         cipher.decrypt(input_path, output_file_path)
-    # Main Handle Encryption Function when user select 1 and 2 option
-
+    # This whole function handles choices 1 & 2
     def handle_encryption_decryption(self, input_type):
         while True:
             action = self.get_action_input()
-
-            if action not in ('e', 'd'):
-                print("Invalid action. Please enter 'e' for encrypt or 'd' for decrypt.")
-                continue
 
             user_input_prompt = f"\nPlease type {input_type} you want to {('encrypt' if action == 'e' else 'decrypt')}: "
             user_input = self.get_non_empty_input(user_input_prompt)
 
             if input_type == 'file':
                 input_path = self.get_file_path(user_input)
+
                 if input_path is None:
                     break
+
+                cipherkey = self.get_valid_cipherkey()
+                output_file = self.get_non_empty_input("\nPlease enter an output file: ")
+
+                if action == 'e':
+                    self.cipher_handler.encrypt_file(cipherkey, input_path, output_file)
                 else:
-                    cipherkey = self.get_valid_cipherkey()
-                    output_file = self.get_non_empty_input("\nPlease enter an output file: ")
-                    if action == 'e':
-                        CipherHandler.encrypt_file(cipherkey, input_path, output_file)
-                    else:
-                        CipherHandler.decrypt_file(cipherkey, input_path, output_file)
+                    self.cipher_handler.decrypt_file(cipherkey, input_path, output_file)
             else:
                 cipherkey = self.get_valid_cipherkey()
-                cipher = CipherHandler.get_cipher_instance(cipherkey, input_type)
+                cipher = self.cipher_handler.get_cipher_instance(cipherkey, input_type)
+
                 if action == 'e':
                     print(cipher.encrypt(user_input))
                 else:
                     print(cipher.decrypt(user_input))
-            
+
             break
+    # This whole function handles choice 3
     def analyze_letter_frequency(self):
         while True:
             letter_dist_input = self.input_file()
@@ -235,7 +162,7 @@ class MenuOptions:
                 self.press_enter()
 
             break
-
+    # This whole function handles choice 4
     def break_caesar_cipher(self):
         while True:
             input_file_analyze = self.input_file()
@@ -262,17 +189,18 @@ class MenuOptions:
             print(f"The inferred caesar cipher key is: {cipher_key}")
 
             prompt_for_decryption = self.get_non_empty_input("\nWould you want to decrypt this file using the key? y/n: ")
-
-            if prompt_for_decryption.lower() != 'y' and prompt_for_decryption.lower() == 'n':
-                print(f"Selected '{prompt_for_decryption}', back to menu options...")
-                break
-            else:
+            
+            if self.confirmation_validator(prompt_for_decryption, choice = None):
                 cipherkey = cipher_key
                 output_file = self.get_non_empty_input("\nPlease enter an output file: ")
                 CipherHandler.decrypt_file(cipherkey, input_file_path, output_file)
-            break
+                self.press_enter()
+                break
+            else:
+                print(f"Selected '{prompt_for_decryption}', back to menu options...")
+                break
 
-
+    # This whole function handles choice 5
     def analyze_encrypted_files(self):
         reference_file = os.path.join(os.path.dirname(__file__), "..", "Dataset", "englishtext.txt")
 

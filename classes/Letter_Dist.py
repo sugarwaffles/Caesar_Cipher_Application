@@ -98,12 +98,13 @@ class SortedList:
         return data[0] if data else None
     
     def get_sorted_list(self):
-        sorted_list = []
+        sorted_dict = {}
         node = self.headNode
         while node is not None:
-            sorted_list.append(node.get_data())
+            letter, freq = node.get_data()
+            sorted_dict[letter] = freq
             node = node.nextNode
-        return sorted_list
+        return sorted_dict
 
 class LetterFrequencyDistribution:
     def __init__(self, filename):
@@ -121,7 +122,7 @@ class LetterFrequencyDistribution:
     def analyze_file(self):
             
             # Print top 5 frequencies
-            top5_freq_table = self.calculate_top5_frequencies()
+            top5_freq_table,_ = self.calculate_top5_frequencies(include_headers=True)
 
             # Total width represents the num of characters(space in this case) to fill the missing spaces (to the left of the str) which will be used for the y-axis creation
             total_width = 80
@@ -142,26 +143,35 @@ class LetterFrequencyDistribution:
             
         return sorted_freq
     
-    def calculate_top5_frequencies(self):
-        
-        top5_freq_table = []
-        #Appending the headers of the TOP 5 FREQ table
-        top5_freq_table.append("TOP 5 FREQ")
-        top5_freq_table.append("-" * 11)
-    
+    def calculate_top5_frequencies(self, include_headers=True):
+        top5_freq_list = []
+        top5_freq_dict = {}
+
+        if include_headers:
+            # Appending the headers of the TOP 5 FREQ table
+            top5_freq_list.append("TOP 5 FREQ")
+            top5_freq_list.append("-" * 11)
+
         # Iterate over the first five nodes in the sorted list
         current_node = self.sorted_frequencies.headNode
         for _ in range(5):
             if current_node is None:
                 break
             letter, frequency = current_node.data
+
+            # Skip headers if not required
+            if not include_headers:
+                continue
+
             if frequency > 10:
-                top5_freq_table.append(f"| {letter.upper()} -{frequency}%")
+                top5_freq_list.append(f"| {letter.upper()} -{frequency}%")
             else:
-                top5_freq_table.append(f"| {letter.upper()} - {frequency}%")
+                top5_freq_list.append(f"| {letter.upper()} - {frequency}%")
+
+            top5_freq_dict[letter] = frequency
             current_node = current_node.nextNode
 
-        return top5_freq_table
+        return top5_freq_list, top5_freq_dict
     
     def create_histogram(self):
         histogram = []

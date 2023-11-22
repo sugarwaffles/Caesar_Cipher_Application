@@ -38,6 +38,37 @@ class CaesarCipher:
 
     def decrypt(self, message):
         raise NotImplementedError("Subclass / Class must implement abstract method decrypt")
+    @classmethod
+    def brute_force_decrypt(cls, ciphertext):
+        english_letter_frequencies = {
+            'e': 12.02, 't': 9.10, 'a': 8.12, 'o': 7.68, 'i': 7.31,
+            'n': 6.95, 's': 6.28, 'r': 6.02, 'h': 5.92, 'd': 4.32,
+            'l': 3.98, 'u': 2.88, 'c': 2.71, 'm': 2.61, 'f': 2.30,
+            'y': 2.11, 'w': 2.09, 'g': 2.03, 'p': 1.82, 'b': 1.49,
+            'v': 1.11, 'k': 0.69, 'x': 0.17, 'q': 0.11, 'j': 0.10,
+            'z': 0.07
+        }
+
+        best_decryption = ""
+        best_score = float('-inf')
+
+        for key in range(26):
+            instance = cls(key)
+            decrypted_message = instance.transform_message(ciphertext, "decrypt")
+
+            # Calculate the score based on letter frequencies
+            score = 0
+            for letter in decrypted_message:
+                if letter.lower() in english_letter_frequencies:
+                    score += english_letter_frequencies[letter.lower()]
+
+            # Update the best decryption if the current score is higher
+            if score > best_score:
+                best_score = score
+                best_decryption = decrypted_message
+
+        print(f"Most likely plaintext: {best_decryption}")
+        print(f"Probability score: {best_score}")
             
 # Inherits from CaesarCipher parent class
 class CaesarCipherMessage(CaesarCipher):
@@ -83,4 +114,5 @@ class CaesarCipherFiles(CaesarCipher):
             with open(output_filename, "w") as output_file:
                 output_file.write(result)
 
-                
+    
+#CaesarCipher.brute_force_decrypt('pm ol ohk hufaopun jvumpkluaphs av zhf, ol dyval pa pu jpwoly, aoha pz, if zv johunpun aol vykly vm aol slaalyz vm aol hswohila, aoha uva h dvyk jvbsk il thkl vba.')

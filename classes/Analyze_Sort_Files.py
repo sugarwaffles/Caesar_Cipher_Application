@@ -18,13 +18,6 @@ class AnalyzeSortFiles:
     
     def get_reference_file(self):
         return self.__reference_file
-    
-    # Reusing the logic from our MenuOptions.py
-    # def decrypt_file(self, cipherkey, input_path, output_file):
-    #     output_file_path = self.create_output_file(output_file)
-    #     if output_file_path is not None:
-    #         cipher = CaesarCipherFiles(cipherkey, input_path)
-    #         cipher.decrypt(input_path, output_file_path)
 
     def analyze_and_sort_files(self):
         encrypted_files = [f for f in os.listdir(self.folder_path) if f.endswith('.txt')]
@@ -59,18 +52,18 @@ class AnalyzeSortFiles:
         log = []
         
         # Print the sorted files & store each line in the log 
-        for i, (file_name, cipher_key) in enumerate(sorted_files):
+        for i, file_info in enumerate(sorted_files.items()):
+            file_name, cipher_key = file_info
             output_file = f"file{i + 1}.txt"
-            log_line = (f"Decrypting: {file_name} with key {cipher_key} as: file{i + 1}.txt")
+            log_line = f"Decrypting: {file_name} with key {cipher_key} as: {output_file}"
             log.append(log_line)
             print(f"\n{log_line}")
             
             # Decrypt the file and generate the output file using CipherHandler
-            CipherHandler.decrypt_file(cipherkey=cipher_key, input_path=(os.path.join(self.folder_path, file_name)),output_file=output_file)
+            CipherHandler.decrypt_file(cipherkey=cipher_key, input_path=(os.path.join(self.folder_path, file_name)), output_file=output_file)
         
         # Write the logs to a file
         
         log_file_path = os.path.join(self.folder_path, "log.txt")
         with open(log_file_path, "w") as log_file:
             log_file.write("\n".join(log))
-        # print("Batch decryption completed successfully.")
