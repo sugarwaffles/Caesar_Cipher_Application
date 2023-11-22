@@ -105,6 +105,9 @@ class MenuOptions:
     def get_file_path(self, file_name):
         return self.input_handler.get_file_path(file_name)
 
+    def get_folder_path(self, file_name):
+        return self.input_handler.get_folder_path(file_name)
+
     def input_file(self):
         return self.input_handler.input_file()
 
@@ -180,7 +183,7 @@ class MenuOptions:
 
             cipher_breaker = BreakCaesarCipher(input_file_path)
 
-            input_reference_file = input(
+            input_reference_file = self.get_non_empty_input(
                 "\nPlease enter the reference frequencies file: ")
             file_path_ref = self.get_file_path(input_reference_file)
 
@@ -217,14 +220,11 @@ class MenuOptions:
     def analyze_encrypted_files(self):
 
         while True:
-            folder_name = input(
+            folder_name = self.get_non_empty_input(
                 "\nPlease enter the folder name for batch decryption: ")
 
-            folder_path = os.path.join(
-                os.path.dirname(__file__), "..", folder_name)
-            if not os.path.exists(folder_path) or not os.path.isdir(folder_path):
-                print(
-                    f"Folder '{folder_name}' not found. Please enter a valid folder name.")
+            folder_path = self.get_folder_path(folder_name)
+            if folder_path is None:
                 break
 
             analyzer = AnalyzeSortFiles(folder_path)
@@ -234,6 +234,7 @@ class MenuOptions:
             self.press_enter()
             break
     # Option 6
+
     def dictionary_attack(self):
         while True:
             # Handle input file
@@ -246,7 +247,7 @@ class MenuOptions:
             file_path_ref = None
 
             # Handle reference file
-            prompt_use_dictionary = input(
+            prompt_use_dictionary = self.get_non_empty_input(
                 "\nWould you like to use a reference (List of English words) for the decryption? Y / N: ")
             confirm_prompt = self.confirmation_validator(
                 prompt_use_dictionary, choice=None)
@@ -255,7 +256,7 @@ class MenuOptions:
             # User wants to use a reference file
             elif confirm_prompt:
                 # Ask for default or user-specified reference file
-                use_default_dict = input(
+                use_default_dict = self.get_non_empty_input(
                     "\nWould you like to use the default English words dictionary (479k words)? Y / N: ")
                 use_default_dict = self.confirmation_validator(
                     use_default_dict, choice=None)
@@ -266,7 +267,7 @@ class MenuOptions:
                 if use_default_dict:
                     file_path_ref = self.get_file_path("all-words.txt")
                 else:
-                    reference_file_selection = input(
+                    reference_file_selection = self.get_non_empty_input(
                         "\nPlease enter the reference dict file: ")
                     file_path_ref = self.get_file_path(
                         reference_file_selection)

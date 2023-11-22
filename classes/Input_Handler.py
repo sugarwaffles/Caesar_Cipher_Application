@@ -18,7 +18,19 @@ class InputHandler:
         else:
             print(f"Error: File '{file_name}' not found.")
             return None
+        
+    @staticmethod
+    def get_folder_path(directory="Dataset"):
+        # Get the full directory path
+        full_folder_path = os.path.join(os.path.dirname(__file__), "..", directory)
 
+        # Check if the directory exists
+        if os.path.exists(full_folder_path):
+            return full_folder_path
+        else:
+            print(f"Error: Directory '{directory}' not found.")
+            return None
+    
     @staticmethod
     def create_output_file(output_filename):
         # Ensure the "Dataset" directory exists
