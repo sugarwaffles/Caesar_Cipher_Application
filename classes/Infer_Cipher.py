@@ -99,7 +99,7 @@ class BreakCaesarCipher(LetterFrequencyDistribution):
 
         # Find the most common cipher key
         most_common_key = max(cipher_key_counts, key=cipher_key_counts.get)
-
+        
         return most_common_key
 
 

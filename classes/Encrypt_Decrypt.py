@@ -3,43 +3,41 @@
 # Instantiating a Abstract Class that requires subclass to run methods such as Encrypt and Decrypt
 
 import os
-
+import string 
 class CaesarCipher:
-    def __init__(self, key,letters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"):
-        self._key = key
-        self._letters = letters
-
+    def __init__(self, key,letters=string.ascii_letters):
+        self.__key = key
+        self.__letters = letters
+    # Getter and setter methods for key and letters
     def get_key(self):
-        return self._key
+        return self.__key
 
     def set_key(self, new_key):
-        self._key = new_key
+        self.__key = new_key
 
     def get_letters(self):
-        return self._letters
-
+        return self.__letters
+    
+    # Transform the given message based on the specified direction (encrypt or decrypt)
     def transform_message(self, message, direction):
-        result = ""
-        for letter in message:
-            if letter in self.get_letters():
-                shift = self.get_key() if direction == "encrypt" else -self.get_key()
-                index = (self.get_letters().find(letter) + shift) % len(self.get_letters())
-                transformed_letter = self.get_letters()[index]
-                if letter.isupper():
-                    result += transformed_letter.upper()
+            result = ""
+            for letter in message:
+                if letter in self.get_letters():
+                    shift = self.get_key() if direction == "encrypt" else -self.get_key()
+                    index = (self.get_letters().find(letter) + shift) % len(self.get_letters())
+                    transformed_letter = self.get_letters()[index]
+                    result += transformed_letter.upper() if letter.isupper() else transformed_letter.lower()
                 else:
-                    result += transformed_letter.lower()
-            else:
-                result += letter
-        return result
-
+                    result += letter
+            return result
+    
+    # Abstract methods for encrypt and decrypt to be implemented by subclasses
     def encrypt(self, message):
         raise NotImplementedError("Subclass / Class must implement abstract method encrypt")
 
     def decrypt(self, message):
         raise NotImplementedError("Subclass / Class must implement abstract method decrypt")
-    # @classmethod
-    # def brute_force_decrypt(cls, ciphertext):
+
         english_letter_frequencies = {
             'e': 12.02, 't': 9.10, 'a': 8.12, 'o': 7.68, 'i': 7.31,
             'n': 6.95, 's': 6.28, 'r': 6.02, 'h': 5.92, 'd': 4.32,
@@ -69,58 +67,39 @@ class CaesarCipher:
 
         print(f"Most likely plaintext: {best_decryption}")
         print(f"Probability score: {best_score}")
-            
+
 # Inherits from CaesarCipher parent class
 class CaesarCipherMessage(CaesarCipher):
-    def __init__(self, key):
-        super().__init__(key)
+    
+    def transform_message(self, message, direction, format_output=True):
+        result = super().transform_message(message, direction)
+        if format_output:
+            return self.format_output(message, result, direction)
+        else:
+            return result
         
     def format_output(self, message, result, transformation):
         if transformation == 'encrypt':
             return f"\nPlaintext:\t{message}\nCiphertext:\t{result}"
         else:
             return f"\nCiphertext:\t{message}\nPlaintext:\t{result}"
-
-    def encrypt(self, message, format_output=True):
-        result = self.transform_message(message,"encrypt")
-        if format_output:
-            return self.format_output(message, result, "encrypt")
-        else:
-            return result
-    def decrypt(self, message, format_output=True):
-        result = self.transform_message(message,"decrypt")
-        if format_output:
-            return self.format_output(message, result, "decrypt")
-        else:
-            return result
         
-# Inherits from CaesarCipher parent class     
+# Inherits from CaesarCipher parent class
 class CaesarCipherFiles(CaesarCipher):
-    
     def __init__(self, key, filename):
         super().__init__(key)
-        self.filename = filename
+        self.__filename = filename
+        
+    def get_filename(self):
+        return self.__filename
 
-    # Check if filename actually exists; if not, return False
-    def pass_filename_criteria(self, filename):
-        if os.path.exists(filename):
-            return True
-        else:
-            return False
-
-    # Inside CaesarCipherFiles class
-    def encrypt(self,input_filename, output_filename):
-        with open(input_filename, "r") as file:
-            file_content = file.read()
-            result = self.transform_message(file_content, "encrypt")
-            with open(output_filename, "w") as output_file:
-                output_file.write(result)
-
-    def decrypt(self,input_filename, output_filename):
-        with open(input_filename, "r") as file:
-            file_content = file.read()
-            result = self.transform_message(file_content, "decrypt")
-            with open(output_filename, "w") as output_file:
-                output_file.write(result)
-
+    def encrypt_or_decrypt_file(self, input_filename, output_filename, operation):
+            # First read the file and decrypt / encrypt depending on operation
+            with open(input_filename, "r") as file:
+                file_content = file.read()
+                # Pass the correct transformation direction to transform_message
+                result = self.transform_message(file_content, operation)
+                # Then write the results to output file, overwrite if file exists
+                with open(output_filename, "w") as output_file:
+                    output_file.write(result)
     

@@ -91,7 +91,7 @@ class MenuOptions:
             self.dictionary_attack()
             # Brute force way of decrypting caesar cipher
         elif choice == 7:
-            self.extra_option_two()
+            self.visualize_caesar_cipher()
             #
         elif choice == 8:
             # Execute a clean exit if user presses 8
@@ -122,40 +122,32 @@ class MenuOptions:
 
     def get_action_input(self):
         return self.cipher_handler.get_action_input()
-
-    # This whole function handles choices 1 & 2
+    
     def handle_encryption_decryption(self, input_type):
         while True:
+            # Prompts user for E or D , returns back
             action = self.get_action_input()
 
-            user_input_prompt = f"\nPlease type {input_type} you want to {('encrypt' if action == 'e' else 'decrypt')}: "
+            # Prompt Depending on input type which is based on the choice selected and action being returned
+            user_input_prompt = f"\nPlease type {input_type} you want to {'encrypt' if action == 'encrypt' else 'decrypt'}: "
             user_input = self.get_non_empty_input(user_input_prompt)
 
+            #Check if input file exists
             if input_type == 'file':
                 input_path = self.get_file_path(user_input)
-
                 if input_path is None:
                     break
-
+                
                 cipherkey = self.get_valid_cipherkey()
-                output_file = self.get_non_empty_input(
-                    "\nPlease enter an output file: ")
-
-                if action == 'e':
-                    self.cipher_handler.encrypt_file(
-                        cipherkey, input_path, output_file)
-                else:
-                    self.cipher_handler.decrypt_file(
-                        cipherkey, input_path, output_file)
+                output_file = self.get_non_empty_input("\nPlease enter an output file: ")
+                # Pass the correct transformation direction to process_file
+                self.cipher_handler.process_file(cipherkey, input_path, output_file, action)
             else:
                 cipherkey = self.get_valid_cipherkey()
-                cipher = self.cipher_handler.get_cipher_instance(
-                    cipherkey, input_type)
-
-                if action == 'e':
-                    print(cipher.encrypt(user_input))
-                else:
-                    print(cipher.decrypt(user_input))
+                cipher = self.cipher_handler.get_cipher_instance(cipherkey, input_type)
+                # Pass the correct transformation direction to transform_message
+                result = cipher.transform_message(user_input, action)
+                print(result)
 
             break
     # This whole function handles choice 3
@@ -197,7 +189,12 @@ class MenuOptions:
                 break
 
             cipher_key = cipher_breaker.calculate_cipher_key()
-
+            
+            if cipher_key == 0:
+                print("File contents are already in Plaintext, Exiting...")
+                break
+                
+            
             print(f"The inferred caesar cipher key is: {cipher_key}")
 
             prompt_for_decryption = self.get_non_empty_input(
@@ -207,7 +204,7 @@ class MenuOptions:
                 cipherkey = cipher_key
                 output_file = self.get_non_empty_input(
                     "\nPlease enter an output file: ")
-                CipherHandler.decrypt_file(
+                self.cipher_handler.decrypt_file(
                     cipherkey, input_file_path, output_file)
                 self.press_enter()
                 break
@@ -228,8 +225,9 @@ class MenuOptions:
                 break
 
             analyzer = AnalyzeSortFiles(folder_path)
-            analyzer.analyze_and_sort_files()
-
+            perform_analysis = analyzer.analyze_and_sort_files()
+            if perform_analysis is None:
+                break
             print("\nBatch decryption completed successfully.")
             self.press_enter()
             break
