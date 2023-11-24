@@ -182,7 +182,7 @@ class LetterFrequencyDistribution:
             # Create a LetterNode instance with [letter, frequency]
             letter_node = LetterNode([letter, frequency])
 
-            # Insert the LetterNode into the sorted list
+            # Insert the LetterNode into the sorted list based on freq then alphabet since we override the __lt__ operator
             sorted_freq.insert(letter_node)
 
         # Return the sorted linked list
