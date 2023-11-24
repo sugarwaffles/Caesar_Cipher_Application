@@ -38,7 +38,7 @@ class PureBruteForceAttack:
         # Iterate through all possible keys (0 to 25).
         for key in range(26):
             self.caesar_cipher.set_key(key)
-            decrypted_text = self.caesar_cipher.decrypt(ciphertext, format_output=False)
+            decrypted_text = self.caesar_cipher.transform_message(ciphertext,'decrypt', format_output=False)
             potential_results.append((decrypted_text, key, set()))
 
         # Select the result with the highest count of common English words.
@@ -99,10 +99,10 @@ class DictionaryAttack(PureBruteForceAttack):
 
         # Select the result with the highest count of common English words.
         best_result = max(potential_results, key=lambda x: len(x[2]))
-
+        
         # Call the overridden method to write the results to an output file.
         self.write_results_to_file(output_file_path=output_file, best_result=best_result, all_results=potential_results)
-
+        
         return best_result[0], best_result[1]
 
     # Override the parent class method to provide custom behavior for writing results to a file.
@@ -111,6 +111,6 @@ class DictionaryAttack(PureBruteForceAttack):
         output_file_path = InputHandler.create_output_file(output_file_path or "output.txt")
         # Override the method to provide custom behavior for writing results to a file.
         with open(output_file_path, 'w') as output_file:
-            # Write the first decrypted text to the output file (assuming you want the first one).
+            # Write the first decrypted text to the output file .
             output_file.write(f"Encrypted Text:\n{all_results[0][0]}\n")
             output_file.write(f"\nDecrypted Text:\n{best_result[0]} , Key: {best_result[1]}\n")

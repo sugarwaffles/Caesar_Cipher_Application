@@ -154,10 +154,13 @@ class MenuOptions:
 
     def analyze_letter_frequency(self):
         while True:
+            #Prompt user for input file 
             letter_dist_input = self.input_file()
+            # Check the file path, if it does not exist, break the loop
             file_path = self.get_file_path(letter_dist_input)
             if file_path is None:
                 break
+            #Proceed with the Frequency Distribution 
             else:
                 letter_dist = LetterFrequencyDistribution(file_path)
                 letter_dist.analyze_file()
@@ -232,7 +235,7 @@ class MenuOptions:
             self.press_enter()
             break
     # Option 6
-
+    
     def dictionary_attack(self):
         while True:
             # Handle input file
@@ -296,7 +299,7 @@ class MenuOptions:
                 # print(all_results)
 
                 # Get the ciphertext from the PureBruteForceAttack instance
-                ciphertext = brute_force_attack.read_ciphertext()
+                brute_force_attack.read_ciphertext()
 
                 # Write the results to the output file
                 brute_force_attack.write_results_to_file(
