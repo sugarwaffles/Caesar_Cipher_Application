@@ -1,0 +1,7 @@
+Encrypted Text:
+Jmydabu
+
+
+Decrypted Text (Key: 16):
+Twinkle
+ 

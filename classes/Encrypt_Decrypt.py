@@ -26,14 +26,14 @@ class CaesarCipher:
 
     def transform_message(self, message, direction):
         result = ""
-
+        
         # Iterate through each letter in the message
         for letter in message:
             # Check if the letter is in the allowed letters set
             if letter in self.get_letters():
                 # Determine the shift direction based on the action (encrypt or decrypt)
                 shift = self.get_key() if direction == "encrypt" else -self.get_key()
-
+                
                 # Calculate the new index after applying the shift
                 index = (self.get_letters().find(letter) +
                         shift) % len(self.get_letters())
@@ -131,3 +131,4 @@ class CaesarCipherFiles(CaesarCipher):
             # Then write the results to output file, overwrite if file exists
             with open(output_filename, "w") as output_file:
                 output_file.write(result)
+                

@@ -113,4 +113,4 @@ class DictionaryAttack(PureBruteForceAttack):
         with open(output_file_path, 'w') as output_file:
             # Write the first decrypted text to the output file .
             output_file.write(f"Encrypted Text:\n{all_results[0][0]}\n")
-            output_file.write(f"\nDecrypted Text:\n{best_result[0]} , Key: {best_result[1]}\n")
+            output_file.write(f"\nDecrypted Text (Key: {best_result[1]}):\n{best_result[0]} \n")

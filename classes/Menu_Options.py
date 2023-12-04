@@ -177,7 +177,7 @@ class MenuOptions:
                 break
 
             cipher_breaker = BreakCaesarCipher(input_file_path)
-
+            
             input_reference_file = self.get_non_empty_input(
                 "\nPlease enter the reference frequencies file: ")
             file_path_ref = self.get_file_path(input_reference_file)
