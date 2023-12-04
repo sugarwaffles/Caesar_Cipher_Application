@@ -1,5 +1,5 @@
-.Spotlight-V100
-.fseventsd
-ST1507_ASSIGNMENT_ONE_AY2324_SEM2.pdf
-Declaration of academic integrity.docx
-.vscode
+.Spotlight-V100/
+.fseventsd/
+*.pdf
+*.docx
+.vscode/
